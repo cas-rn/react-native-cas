@@ -6,6 +6,7 @@ import IndexPage from "./view/IndexPage";
 import ShowScanPage from "./view/ShowScanPage";
 import SignUpPage from "./view/SignUpPage";
 import ModifyPassPage from "./view/ModifyPassPage";
+import PublicCoursePage from "./view/PublicCoursePage";
 
 import BaseCommon from "./common/BaseCommon";
 import * as GlobalDataUtil from "./util/GlobalDataUtil";
@@ -49,6 +50,7 @@ export default class App extends Component {
                     <Scene key="ShowScanPage" component={ShowScanPage}/>
                     <Scene key="SignUpPage" component={SignUpPage}/>
                     <Scene key="ModifyPassPage" component={ModifyPassPage}/>
+                    <Scene key="PublicCoursePage" component={PublicCoursePage} initial={true}/>
 
                 </Scene>
             </Router>

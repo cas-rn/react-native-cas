@@ -15,8 +15,12 @@ import MyButtonComponent from "../component/MyButtonComponent";
 import { Actions } from "react-native-router-flux";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
 import { List, Radio } from "antd-mobile";
+import MyPickerNormalComponent from "../component/MyPickerNormalComponent";
+import MyDatePickerNormalComponent from "../component/MyDatePickerNormalComponent";
+import * as DateParseFormatUtil from "../util/DateParseFormatUtil";
 const RadioItem = Radio.RadioItem;
-export default class SignUpPage extends BaseComponent {
+
+export default class PublicCoursePage extends BaseComponent {
 
 
     // 构造
@@ -25,11 +29,10 @@ export default class SignUpPage extends BaseComponent {
         this.baseCommon = new BaseCommon({ ...props, backPress : (e) => this.onBackPress(e) });
         // 初始状态
         this.state = {
+            showPickerNormal : true,
             value : 0,  //0-学生，1-老师
+
             name : '',
-            telephone : '',
-            password : '',
-            password2 : '',
         };
     }
 
@@ -113,6 +116,73 @@ export default class SignUpPage extends BaseComponent {
         super.componentWillMount();
         this.baseCommon.componentWillMount();
 
+        this.action = {
+            "widgetName" : "datetimepicker",                 // 控件类型:text、textarea、select、datepicker、timepicker、citypicker、phone...
+            "title" : "日期+时间",                         // 显示的标题
+            "subTitle" : "请选择",                    // 显示的副标题，非必须
+            "valueKey" : "datetime",                  // 字段名称
+            "value" : "",
+            "YPKey" : "YPContactGender",            // 优豹字段名称，非必须
+            "validator" : [
+                {
+                    "rule" : "range",
+                    "value" : "6,30",
+                    "error" : "密码长度必须大于等于6，小于30"
+                }
+            ]
+        };
+        this.action1 = {
+            "widgetName" : "datetimepicker",                 // 控件类型:text、textarea、select、datepicker、timepicker、citypicker、phone...
+            "title" : "日期+时间",                         // 显示的标题
+            "subTitle" : "请选择",                    // 显示的副标题，非必须
+            "valueKey" : "datetime",                  // 字段名称
+            "value" : "",
+            "YPKey" : "YPContactGender",            // 优豹字段名称，非必须
+            "validator" : [
+                {
+                    "rule" : "range",
+                    "value" : "6,30",
+                    "error" : "密码长度必须大于等于6，小于30"
+                }
+            ]
+        };
+        this.action2 = {
+            "widgetName" : "datetimepicker",                 // 控件类型:text、textarea、select、datepicker、timepicker、citypicker、phone...
+            "title" : "日期+时间",                         // 显示的标题
+            "subTitle" : "请选择",                    // 显示的副标题，非必须
+            "valueKey" : "datetime",                  // 字段名称
+            "value" : "",
+            "YPKey" : "YPContactGender",            // 优豹字段名称，非必须
+            "validator" : [
+                {
+                    "rule" : "range",
+                    "value" : "6,30",
+                    "error" : "密码长度必须大于等于6，小于30"
+                }
+            ]
+        };
+        const { action, action1, action2 } = this;
+
+        {
+            let selectedValue = null;
+
+            selectedValue = new Date();
+            action.selectedValue = selectedValue;
+        }
+
+        {
+            let selectedValue = null;
+            selectedValue = new Date();
+
+            action1.selectedValue = selectedValue;
+        }
+
+        {
+            let selectedValue = null;
+            selectedValue = new Date();
+            action2.selectedValue = selectedValue;
+        }
+
     }
 
     onChange = (value) => {
@@ -124,6 +194,9 @@ export default class SignUpPage extends BaseComponent {
 
     render() {
         const { value, } = this.state;
+        let action = this.action;
+        let action1 = this.action1;
+        let action2 = this.action2;
         const data = [
             { value : 0, label : '学生' },
             { value : 1, label : '老师' },
@@ -134,7 +207,7 @@ export default class SignUpPage extends BaseComponent {
 
                 {ViewUtil.getViewStatusBar()}
                 <HeaderNormalWithRightButtonComponent
-                    textCenter={'注 册'}
+                    textCenter={'发 布'}
                     _leftBtnShouldShow={true}
                 />
                 <MyScrollViewComponent
@@ -150,15 +223,14 @@ export default class SignUpPage extends BaseComponent {
                         style={[ StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite, StyleUtil.gStyles.gCardBgWhite ]}>
 
                         <List>
-                            {data.map(i => (
-                                <RadioItem key={i.value} checked={value === i.value} onChange={() => this.onChange(i.value)}>
-                                    {i.label}
-                                </RadioItem>
-                            ))}
+
+                            <MyPickerNormalComponent ref="pickerNormal"
+                                                     _visible={this.state.showPickerNormal}
+                            />
 
                             <List.Item>
 
-                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'姓名        '} _inputPlaceHolder={'请输入姓名'}
+                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'上课地址'} _inputPlaceHolder={'请输入上课地址'}
                                                                         _inputValue={this.state.name}
                                                                         _onChange={(value) => {
                                                                             this.baseCommon.mounted && this.setState({ name : value });
@@ -166,34 +238,47 @@ export default class SignUpPage extends BaseComponent {
                                 />
                             </List.Item>
 
-                            <List.Item>
-                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'账号        '} _inputPlaceHolder={'请输入账号'}
-                                                                        _inputValue={this.state.telephone}
-                                                                        _onChange={(value) => {
-                                                                            this.baseCommon.mounted && this.setState({ telephone : value });
-                                                                        }}
-                                />
-                            </List.Item>
+                            <MyDatePickerNormalComponent
+                                title={'上课时间'}
+                                selectedValue={action.selectedValue}
+                                onChange={(v) => {
+                                    console.log(action.value);
+                                    action.selectedValue = v;
+                                    console.log(action.value);
 
-                            <List.Item>
-                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'密码        '} _inputPlaceHolder={'不少于6位'}
-                                                                        _type={'password'}
-                                                                        _inputValue={this.state.password}
-                                                                        _onChange={(value) => {
-                                                                            this.baseCommon.mounted && this.setState({ password : value });
-                                                                        }}
-                                />
-                            </List.Item>
+                                    action.value = DateParseFormatUtil.formatDateLongOrStringToStringMinute(v);
 
-                            <List.Item>
-                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'重复密码'} _inputPlaceHolder={'不少于6位'}
-                                                                        _type={'password'}
-                                                                        _inputValue={this.state.password2}
-                                                                        _onChange={(value) => {
-                                                                            this.baseCommon.mounted && this.setState({ password2 : value });
-                                                                        }}
-                                />
-                            </List.Item>
+                                    console.log(action.value);
+                                }}
+                            />
+                            <MyDatePickerNormalComponent
+                                title={'开始签到时间'}
+                                selectedValue={action1.selectedValue}
+                                onChange={(v) => {
+                                    console.log(action1.value);
+                                    action1.selectedValue = v;
+                                    console.log(action1.value);
+
+                                    action1.value = DateParseFormatUtil.formatDateLongOrStringToStringMinute(v);
+
+                                    console.log(action1.value);
+                                }}
+                            />
+                            <MyDatePickerNormalComponent
+                                title={'结束签到时间'}
+                                selectedValue={action2.selectedValue}
+                                onChange={(v) => {
+                                    console.log(v);
+                                    console.log(action2.value);
+                                    action2.selectedValue = v;
+                                    console.log(action2.value);
+
+                                    action2.value = DateParseFormatUtil.formatDateLongOrStringToStringMinute(v);
+
+                                    // action2.value = v.format("YYYY-MM-DD HH:mm");//data为日期的字符串形式
+                                    console.log(action2.value);
+                                }}
+                            />
 
                         </List>
 
@@ -207,7 +292,7 @@ export default class SignUpPage extends BaseComponent {
                                 this.onPressSignUp();
                             }}
                         >
-                            <Text> 注 册 </Text>
+                            <Text> 发 布 </Text>
                         </MyButtonComponent>
 
                     </MyViewComponent>

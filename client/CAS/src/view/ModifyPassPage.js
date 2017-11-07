@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { Text,List } from "antd-mobile";
+import { List, Text } from "antd-mobile";
 import * as StyleUtil from "../util/StyleUtil";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
 import LabelWithInputSingleLineNormalNoBorderComponent from "../component/LabelWithInputSingleLineNormalNoBorderComponent";
@@ -69,47 +69,40 @@ export default class ModifyPassPage extends BaseComponent {
 
                     <View style={StyleUtil.gStyles.gCardBgWhite}>
                         <List>
-                        <List.Item>
+                            <List.Item>
 
-                            <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'原密码    '} _inputPlaceHolder={'请输入原密码'}
-                                                                             _type={'password'}
-                                                                             _inputValue={this.state.passwordNow}
-                                                                             _onChange={(value) => {
-                                                                                 this.baseCommon.mounted && this.setState({ passwordNow : value });
-                                                                             }}
-                            />
-                        </List.Item>
+                                <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'原密码    '} _inputPlaceHolder={'请输入原密码'}
+                                                                                 _type={'password'}
+                                                                                 _inputValue={this.state.passwordNow}
+                                                                                 _onChange={(value) => {
+                                                                                     this.baseCommon.mounted && this.setState({ passwordNow : value });
+                                                                                 }}
+                                />
+                            </List.Item>
 
+                            <List.Item>
 
+                                <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'新密码    '} _inputPlaceHolder={'不少于6位'}
+                                                                                 _type={'password'}
+                                                                                 _inputValue={this.state.password}
+                                                                                 _onChange={(value) => {
+                                                                                     this.baseCommon.mounted && this.setState({ password : value });
+                                                                                 }}
+                                />
+                            </List.Item>
 
-                        <List.Item>
+                            <List.Item>
 
-                            <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'新密码    '} _inputPlaceHolder={'不少于6位'}
-                                                                             _type={'password'}
-                                                                             _inputValue={this.state.password}
-                                                                             _onChange={(value) => {
-                                                                                 this.baseCommon.mounted && this.setState({ password : value });
-                                                                             }}
-                            />
-                        </List.Item>
-
-
-
-
-                        <List.Item>
-
-
-                            <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'重复密码'} _inputPlaceHolder={'不少于6位'}
-                                                                             _type={'password'}
-                                                                             _inputValue={this.state.password2}
-                                                                             _onChange={(value) => {
-                                                                                 this.baseCommon.mounted && this.setState({ password2 : value });
-                                                                             }}
-                            />
-                        </List.Item>
+                                <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'重复密码'} _inputPlaceHolder={'不少于6位'}
+                                                                                 _type={'password'}
+                                                                                 _inputValue={this.state.password2}
+                                                                                 _onChange={(value) => {
+                                                                                     this.baseCommon.mounted && this.setState({ password2 : value });
+                                                                                 }}
+                                />
+                            </List.Item>
 
                         </List>
-
 
                         <MyButtonComponent
                             style={[ StyleUtil.gStyles.gButtonBlueDefault, {

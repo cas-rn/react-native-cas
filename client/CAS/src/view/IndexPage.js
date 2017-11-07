@@ -11,9 +11,18 @@ import MyButtonComponent from "../component/MyButtonComponent";
 import { Actions } from "react-native-router-flux";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
 import AMapLocationUtil from "../util/AMapLocationUtil";
+import PropTypes from "prop-types";
 
 export default class IndexPage extends BaseComponent {
 
+    static propTypes = {
+        role : PropTypes.string, //
+
+    };
+
+    static defaultProps = {
+        role : '0', //0-老师，1-学生
+    };
 
     // 构造
     constructor(props) {
@@ -58,9 +67,11 @@ export default class IndexPage extends BaseComponent {
 
         let bodyObj = {};
         alert('132');
-        Actions.ShowScanPage({onReadData:(value)=>{
-            console.log(value);
-        }});
+        Actions.ShowScanPage({
+            onReadData : (value) => {
+                console.log(value);
+            }
+        });
 
     }
 
@@ -107,7 +118,7 @@ export default class IndexPage extends BaseComponent {
                     }}>
 
                     <MyViewComponent
-                        style={[ StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite,StyleUtil.gStyles.gCardBgWhite ]}>
+                        style={[ StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite, StyleUtil.gStyles.gCardBgWhite ]}>
 
                         <MyButtonComponent
                             style={[ StyleUtil.gStyles.gButtonBlueDefault, {
@@ -134,6 +145,65 @@ export default class IndexPage extends BaseComponent {
                         >
                             <Text> GPS签到 </Text>
                         </MyButtonComponent>
+
+                        {
+                            this.props.role == '0'
+                                ? <MyViewComponent>
+
+                                <MyButtonComponent
+                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                        marginBottom : 20,
+                                        marginTop : 40,
+                                    }, ]}
+                                    type={'primary'}
+                                    onPress={() => {
+                                        this.onPressSignGPS();
+                                    }}
+                                >
+                                    <Text> 发布课程 </Text>
+                                </MyButtonComponent>
+                                <MyButtonComponent
+                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                        marginBottom : 20,
+                                        marginTop : 40,
+                                    }, ]}
+                                    type={'primary'}
+                                    onPress={() => {
+                                        this.onPressSignGPS();
+                                    }}
+                                >
+                                    <Text> 已发布课程 </Text>
+                                </MyButtonComponent>
+                                <MyButtonComponent
+                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                        marginBottom : 20,
+                                        marginTop : 40,
+                                    }, ]}
+                                    type={'primary'}
+                                    onPress={() => {
+                                        this.onPressSignGPS();
+                                    }}
+                                >
+                                    <Text> 我的课程 </Text>
+                                </MyButtonComponent>
+                                <MyButtonComponent
+                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                        marginBottom : 20,
+                                        marginTop : 40,
+                                    }, ]}
+                                    type={'primary'}
+                                    onPress={() => {
+                                        Actions.ModifyPassPage();
+                                    }}
+                                >
+                                    <Text> 修改密码 </Text>
+                                </MyButtonComponent>
+
+                            </MyViewComponent>
+                                : <MyViewComponent>
+
+                            </MyViewComponent>
+                        }
 
                     </MyViewComponent>
 

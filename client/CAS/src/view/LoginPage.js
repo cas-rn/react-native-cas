@@ -151,7 +151,7 @@ export default class LoginPage extends BaseComponent {
                     }}>
 
                     <MyViewComponent
-                        style={[  StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite, StyleUtil.gStyles.gCardBgWhite ]}>
+                        style={[ StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite, StyleUtil.gStyles.gCardBgWhite ]}>
 
                         <List>
 

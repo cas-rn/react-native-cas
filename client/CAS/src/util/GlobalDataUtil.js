@@ -1,5 +1,5 @@
 import Storage from "react-native-storage";
-import { AsyncStorage,Alert } from "react-native";
+import { Alert, AsyncStorage } from "react-native";
 import * as TmpDataUtil from "./TmpDataUtil";
 const alert = Alert.alert;
 
