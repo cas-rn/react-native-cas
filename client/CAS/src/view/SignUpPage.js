@@ -149,48 +149,66 @@ export default class SignUpPage extends BaseComponent {
                     }}>
 
                     <MyViewComponent
-                        style={[ StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite ]}>
+                        style={[ StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite,StyleUtil.gStyles.gCardBgWhite ]}>
 
-                        <List renderHeader={() => '选择身份'}>
+                        <List>
                             {data.map(i => (
                                 <RadioItem key={i.value} checked={value === i.value} onChange={() => this.onChange(i.value)}>
                                     {i.label}
                                 </RadioItem>
                             ))}
+
+                            <List.Item>
+
+                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'姓名        '} _inputPlaceHolder={'请输入姓名'}
+                                                                        _inputValue={this.state.name}
+                                                                        _onChange={(value) => {
+                                                                            this.baseCommon.mounted && this.setState({ name : value });
+                                                                        }}
+                                />
+                            </List.Item>
+
+
+                            <List.Item>
+                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'账号        '} _inputPlaceHolder={'请输入账号'}
+                                                                        _inputValue={this.state.telephone}
+                                                                        _onChange={(value) => {
+                                                                            this.baseCommon.mounted && this.setState({ telephone : value });
+                                                                        }}
+                                />
+                            </List.Item>
+
+
+                            <List.Item>
+                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'密码        '} _inputPlaceHolder={'不少于6位'}
+                                                                        _type={'password'}
+                                                                        _inputValue={this.state.password}
+                                                                        _onChange={(value) => {
+                                                                            this.baseCommon.mounted && this.setState({ password : value });
+                                                                        }}
+                                />
+                            </List.Item>
+
+
+                            <List.Item>
+                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'重复密码'} _inputPlaceHolder={'不少于6位'}
+                                                                        _type={'password'}
+                                                                        _inputValue={this.state.password2}
+                                                                        _onChange={(value) => {
+                                                                            this.baseCommon.mounted && this.setState({ password2 : value });
+                                                                        }}
+                                />
+                            </List.Item>
+
+
+
                         </List>
 
 
-                        <LabelWithInputSingleLineNormalNoBorder _labelContent={'姓名        '} _inputPlaceHolder={'请输入姓名'}
-                                                                _style={[ StyleUtil.gStyles.gMarginTopBottom ]}
-                                                                _inputValue={this.state.name}
-                                                                _onChange={(value) => {
-                                                                    this.baseCommon.mounted && this.setState({ name : value });
-                                                                }}
-                        />
 
-                        <LabelWithInputSingleLineNormalNoBorder _labelContent={'账号        '} _inputPlaceHolder={'请输入账号'}
-                                                                _style={[ StyleUtil.gStyles.gMarginTopBottom ]}
-                                                                _inputValue={this.state.telephone}
-                                                                _onChange={(value) => {
-                                                                    this.baseCommon.mounted && this.setState({ telephone : value });
-                                                                }}
-                        />
-                        <LabelWithInputSingleLineNormalNoBorder _labelContent={'密码        '} _inputPlaceHolder={'不少于6位'}
-                                                                _type={'password'}
-                                                                _style={[ StyleUtil.gStyles.gMarginTopBottom ]}
-                                                                _inputValue={this.state.password}
-                                                                _onChange={(value) => {
-                                                                    this.baseCommon.mounted && this.setState({ password : value });
-                                                                }}
-                        />
-                        <LabelWithInputSingleLineNormalNoBorder _labelContent={'重复密码'} _inputPlaceHolder={'不少于6位'}
-                                                                _type={'password'}
-                                                                _style={[ StyleUtil.gStyles.gMarginTopBottom ]}
-                                                                _inputValue={this.state.password2}
-                                                                _onChange={(value) => {
-                                                                    this.baseCommon.mounted && this.setState({ password2 : value });
-                                                                }}
-                        />
+
+
+
 
                         <MyButtonComponent
                             style={[ StyleUtil.gStyles.gButtonBlueDefault, {

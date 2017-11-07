@@ -14,6 +14,7 @@ import LabelWithInputSingleLineNormalNoBorder from "../component/LabelWithInputS
 import MyButtonComponent from "../component/MyButtonComponent";
 import { Actions } from "react-native-router-flux";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
+import { List } from "antd-mobile";
 
 export default class LoginPage extends BaseComponent {
 
@@ -120,7 +121,6 @@ export default class LoginPage extends BaseComponent {
 
     }
 
-
     onPressSignUp() {
 
         Actions.SignUpPage();
@@ -151,24 +151,37 @@ export default class LoginPage extends BaseComponent {
                     }}>
 
                     <MyViewComponent
-                        style={[ StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite ]}>
+                        style={[  StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite, StyleUtil.gStyles.gCardBgWhite ]}>
 
-                        <LabelWithInputSingleLineNormalNoBorder _labelContent={'账号        '} _inputPlaceHolder={'请输入账号'}
-                                                                _style={[ StyleUtil.gStyles.gMarginTopBottom ]}
-                                                                _inputValue={this.state.telephone}
-                                                                _onChange={(value) => {
-                                                                    this.baseCommon.mounted && this.setState({ telephone : value });
-                                                                }}
-                        />
-                        <LabelWithInputSingleLineNormalNoBorder _labelContent={'密码        '} _inputPlaceHolder={'不少于6位'}
-                                                                _type={'password'}
-                                                                _style={[ StyleUtil.gStyles.gMarginTopBottom ]}
-                                                                _inputValue={this.state.password}
-                                                                _onChange={(value) => {
-                                                                    this.baseCommon.mounted && this.setState({ password : value });
-                                                                }}
-                        />
+                        <List>
 
+                            <List.Item>
+
+                                <LabelWithInputSingleLineNormalNoBorder
+                                    _labelContent={'账号        '}
+                                    _inputPlaceHolder={'请输入账号'}
+                                    _inputValue={this.state.telephone}
+                                    _onChange={(value) => {
+                                        this.baseCommon.mounted && this.setState({ telephone : value });
+                                    }}
+                                />
+                            </List.Item>
+
+                            <List.Item>
+
+                                <LabelWithInputSingleLineNormalNoBorder
+                                    _labelContent={'密码        '}
+                                    _inputPlaceHolder={'不少于6位'}
+                                    _type={'password'}
+                                    _inputValue={this.state.password}
+                                    _onChange={(value) => {
+                                        this.baseCommon.mounted && this.setState({ password : value });
+                                    }}
+                                />
+
+                            </List.Item>
+
+                        </List>
                         <MyButtonComponent
                             textStyle={[ StyleUtil.gStyles.gButtonTextWhiteDefault, ]}
                             style={[ StyleUtil.gStyles.gButtonBlueDefault, {

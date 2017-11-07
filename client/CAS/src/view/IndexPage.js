@@ -93,6 +93,7 @@ export default class IndexPage extends BaseComponent {
                                                       _textBtn={'btn'}
                                                       _onPressBtn={() => {
                                                           console.log(123);
+                                                          Actions.ModifyPassPage();
                                                       }}
 
                 />
@@ -106,7 +107,7 @@ export default class IndexPage extends BaseComponent {
                     }}>
 
                     <MyViewComponent
-                        style={[ StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite ]}>
+                        style={[ StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite,StyleUtil.gStyles.gCardBgWhite ]}>
 
                         <MyButtonComponent
                             style={[ StyleUtil.gStyles.gButtonBlueDefault, {
