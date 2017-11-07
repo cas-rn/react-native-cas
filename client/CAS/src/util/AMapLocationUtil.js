@@ -5,7 +5,7 @@ import React from "react";
 import { Alert, NativeAppEventEmitter } from "react-native";
 
 import AMapLocation from "react-native-smart-amap-location";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 /**
  *  how to use:
@@ -34,7 +34,10 @@ export default class AMapLocationUtil {
         let amapOptions = null;
         amapOptions = {
             onceLocation : true,
+            mockEnable : false,
         };
+
+        // setMockEnable default true;
 
         AMapLocation.init(amapOptions); //使用默认定位配置
         this.listenerAMap = NativeAppEventEmitter.addListener('amap.location.onLocationResult',

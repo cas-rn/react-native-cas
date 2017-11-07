@@ -16,6 +16,7 @@
 		"react-native-router-flux": "^4.0.0-beta.22",
 		"react-native-smart-amap-location": "git+https://github.com/ribuluo000/react-native-smart-amap-location.git",
 		"react-native-storage": "^0.2.2",
+		"react-native-touch-once": "^1.0.3",
 		"teaset": "^0.4.6"
 	},
 	"devDependencies": {

@@ -6,10 +6,9 @@
 'use strict';
 
 import React from "react";
-import { BackAndroid } from "react-native";
+import { BackHandler } from "react-native";
 
 import OrientationUtil from "../util/OrientationUtil";
-// import SplashScreen from "react-native-splash-screen";
 
 export default class BaseCommon {
     constructor(props) {
@@ -26,18 +25,17 @@ export default class BaseCommon {
     componentDidMount() {
         this.mounted = true;
         if (this.props.backPress) {
-            BackAndroid.addEventListener('hardwareBackPress', this._onHardwareBackPress);
+            BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
         }
         if (this.props._orientationDidChange) {
             OrientationUtil.addOrientationListener(this._orientationDidChange);
         }
-        // SplashScreen.hide();
 
     }
 
     componentWillUnmount() {
         if (this.props.backPress) {
-            BackAndroid.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
+            BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
         }
 
         if (this.props._orientationDidChange) {

@@ -1,9 +1,11 @@
 // RNRF logic here
 import React, { Component } from "react";
 import { ActionConst, Router, Scene } from "react-native-router-flux";
-import Login from "./view/Login";
+import LoginPage from "./view/LoginPage";
+import IndexPage from "./view/IndexPage";
 
 import BaseCommon from "./common/BaseCommon";
+import * as GlobalDataUtil from "./util/GlobalDataUtil";
 
 export default class App extends Component {
     constructor(props) {
@@ -20,6 +22,7 @@ export default class App extends Component {
 
     componentWillMount() {
         this.baseCommon.componentWillMount();
+        GlobalDataUtil.init();
 
     }
 
@@ -31,15 +34,15 @@ export default class App extends Component {
     render() {
         let view = null;
         view = (
-            <Router hideNavBar="true"
-                // backAndroidHandler={() => {
-                //     return this.willMountBackAndroid2();
-                // }}
+            <Router
+                hideNavBar={true}
+                headerMode={'none'}
+
             >
                 <Scene key="root">
 
-                    <Scene key="Login" component={Login} title="Login" type={ActionConst.RESET}
-                           initial={true}/>
+                    <Scene key="LoginPage" component={LoginPage} type={ActionConst.RESET} initial={true}/>
+                    <Scene key="IndexPage" component={IndexPage}/>
 
                 </Scene>
             </Router>

@@ -1,7 +1,7 @@
 import Storage from "react-native-storage";
-import { AsyncStorage,Alert, } from "react-native";
+import { AsyncStorage,Alert } from "react-native";
 import * as TmpDataUtil from "./TmpDataUtil";
-const alert = 1;
+const alert = Alert.alert;
 
 let GlobalDataUtil = {
 
