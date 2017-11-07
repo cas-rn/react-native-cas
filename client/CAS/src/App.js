@@ -7,6 +7,9 @@ import ShowScanPage from "./view/ShowScanPage";
 import SignUpPage from "./view/SignUpPage";
 import ModifyPassPage from "./view/ModifyPassPage";
 import PublicCoursePage from "./view/PublicCoursePage";
+import MyCourseListManagePage from "./view/MyCourseListManagePage";
+import AddCoursePage from "./view/AddCoursePage";
+import MyCourseSignListWithQRCodePage from "./view/MyCourseSignListWithQRCodePage";
 
 import BaseCommon from "./common/BaseCommon";
 import * as GlobalDataUtil from "./util/GlobalDataUtil";
@@ -50,7 +53,10 @@ export default class App extends Component {
                     <Scene key="ShowScanPage" component={ShowScanPage}/>
                     <Scene key="SignUpPage" component={SignUpPage}/>
                     <Scene key="ModifyPassPage" component={ModifyPassPage}/>
-                    <Scene key="PublicCoursePage" component={PublicCoursePage} initial={true}/>
+                    <Scene key="PublicCoursePage" component={PublicCoursePage}/>
+                    <Scene key="MyCourseListManagePage" component={MyCourseListManagePage} initial={true}/>
+                    <Scene key="AddCoursePage" component={AddCoursePage} initial={true}/>
+                    <Scene key="MyCourseSignListWithQRCodePage" component={MyCourseSignListWithQRCodePage} initial={true}/>
 
                 </Scene>
             </Router>

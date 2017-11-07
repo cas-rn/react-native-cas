@@ -14,8 +14,9 @@ import MyViewComponent from "../component/MyViewComponent";
 import MyScrollViewComponent from "../component/MyScrollViewComponent";
 import * as PressOnlyOnceUtil from "../util/PressOnlyOnceUtil";
 import * as ColorUtil from "../util/ColorUtil";
+import MyPushCardInputAreaComponent from "../component/MyPushCardInputAreaComponent";
 
-export default class ModifyPassPage extends BaseComponent {
+export default class AddCoursePage extends BaseComponent {
     constructor(props) {
         super(props);
         this.baseCommon = new BaseCommon({ ...props, });
@@ -39,6 +40,14 @@ export default class ModifyPassPage extends BaseComponent {
         super.componentWillMount();
         this.baseCommon.componentWillMount();
         // console.log('componentWillMount');
+
+        this.action = {
+            "title" : "描述",                         // 显示的标题
+            "subTitle" : "",                    // 显示的副标题，非必须
+            "valueKey" : "age",                  // 字段名称
+            "value" : "66",
+            "default" : "",
+        };
     }
 
     componentWillUnmount() {
@@ -48,11 +57,29 @@ export default class ModifyPassPage extends BaseComponent {
     }
 
     render() {
+        let action = this.action;
+
+        if (action.value.length == 0 && action.default.length > 0) {
+            action.value = action.default;
+        }
+        let viewAction = (
+            <MyPushCardInputAreaComponent title={action.title} subTitle={action.subTitle}
+                                          mInputDefaultValue={action.value}
+                                          onChange={(v) => {
+                                              console.log(action);
+                                              action.value = v;
+                                              console.log(action);
+                                          }}
+
+            />
+
+        );
+
         return (
             <MyViewComponent style={{ backgroundColor : ColorUtil.bgGray }}>
 
                 <HeaderNormalWithRightButtonComponent
-                    textCenter="重置密码"
+                    textCenter={"添加课程"}
                     _leftBtnShouldShow={true}
 
                 />
@@ -71,7 +98,7 @@ export default class ModifyPassPage extends BaseComponent {
                         <List>
                             <List.Item>
 
-                                <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'原密码    '}
+                                <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'课程    '}
                                                                                  _type={'password'}
                                                                                  _inputValue={this.state.passwordNow}
                                                                                  _onChange={(value) => {
@@ -80,27 +107,7 @@ export default class ModifyPassPage extends BaseComponent {
                                 />
                             </List.Item>
 
-                            <List.Item>
-
-                                <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'新密码    '} _inputPlaceHolder={'不少于6位'}
-                                                                                 _type={'password'}
-                                                                                 _inputValue={this.state.password}
-                                                                                 _onChange={(value) => {
-                                                                                     this.baseCommon.mounted && this.setState({ password : value });
-                                                                                 }}
-                                />
-                            </List.Item>
-
-                            <List.Item>
-
-                                <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'重复密码'} _inputPlaceHolder={'不少于6位'}
-                                                                                 _type={'password'}
-                                                                                 _inputValue={this.state.password2}
-                                                                                 _onChange={(value) => {
-                                                                                     this.baseCommon.mounted && this.setState({ password2 : value });
-                                                                                 }}
-                                />
-                            </List.Item>
+                            {viewAction}
 
                         </List>
 
@@ -115,7 +122,7 @@ export default class ModifyPassPage extends BaseComponent {
                                 });
                             }}
                         >
-                            <Text> 重 置 </Text>
+                            <Text> 添 加 </Text>
                         </MyButtonComponent>
 
                     </View>

@@ -159,7 +159,6 @@ export default class LoginPage extends BaseComponent {
 
                                 <LabelWithInputSingleLineNormalNoBorder
                                     _labelContent={'账号        '}
-                                    _inputPlaceHolder={'请输入账号'}
                                     _inputValue={this.state.telephone}
                                     _onChange={(value) => {
                                         this.baseCommon.mounted && this.setState({ telephone : value });

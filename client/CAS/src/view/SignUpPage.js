@@ -158,7 +158,7 @@ export default class SignUpPage extends BaseComponent {
 
                             <List.Item>
 
-                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'姓名        '} _inputPlaceHolder={'请输入姓名'}
+                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'姓名        '}
                                                                         _inputValue={this.state.name}
                                                                         _onChange={(value) => {
                                                                             this.baseCommon.mounted && this.setState({ name : value });
@@ -167,7 +167,7 @@ export default class SignUpPage extends BaseComponent {
                             </List.Item>
 
                             <List.Item>
-                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'账号        '} _inputPlaceHolder={'请输入账号'}
+                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'账号        '}
                                                                         _inputValue={this.state.telephone}
                                                                         _onChange={(value) => {
                                                                             this.baseCommon.mounted && this.setState({ telephone : value });

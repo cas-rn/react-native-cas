@@ -230,7 +230,7 @@ export default class PublicCoursePage extends BaseComponent {
 
                             <List.Item>
 
-                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'上课地址'} _inputPlaceHolder={'请输入上课地址'}
+                                <LabelWithInputSingleLineNormalNoBorder _labelContent={'上课地址'}
                                                                         _inputValue={this.state.name}
                                                                         _onChange={(value) => {
                                                                             this.baseCommon.mounted && this.setState({ name : value });

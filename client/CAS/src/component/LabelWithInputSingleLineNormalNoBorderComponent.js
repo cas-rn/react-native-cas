@@ -22,10 +22,7 @@ var styles = StyleSheet.create({
     },
     //
     subView : {
-        // width: StyleUtil.size.width - SizeUtil.gMarginLeftRight * 2 - SizeUtil.gPaddingLeftRight * 2,
         flexDirection : 'row',
-        paddingLeft : SizeUtil.gPaddingLeftRight,
-        paddingRight : SizeUtil.gPaddingLeftRight,
         backgroundColor : ColorUtil.bgWhite,
         alignSelf : 'stretch',
         justifyContent : 'center',
@@ -36,15 +33,13 @@ var styles = StyleSheet.create({
     },
     // 标题
     labelText : {
-        // marginTop: 10,
-        // marginBottom: 5,
         fontSize : SizeUtil.gTextSizeLarge,
         color : ColorUtil.textColorBlack,
-        // fontWeight: 'bold',
         textAlign : 'left',
+        flex : 1,
     },
     inputItemStyle : {
-        flex : 1,
+        flex : 2,
         display : 'flex',
     },
 });
@@ -72,7 +67,7 @@ export default class LabelWithInputSingleLineNormalNoBorderComponent extends Com
     };
 
     static defaultProps = {
-        _inputPlaceHolder : '_inputPlaceHolder',
+        _inputPlaceHolder : '',
         _inputDefaultValue : '',
         _inputValue : '',
         _visible : true,
@@ -110,7 +105,7 @@ export default class LabelWithInputSingleLineNormalNoBorderComponent extends Com
                         clear
                         type={this.props._type}
                         fontSize={SizeUtil.gTextSizeLarge}
-                        placeholder={this.props._inputPlaceHolder}
+                        placeholder={this.props._inputPlaceHolder.length > 0 ? this.props._inputPlaceHolder : `请输入${this.props._labelContent}`}
                         defaultValue={this.props._inputDefaultValue}
                         value={this.props._inputValue}
                         editable={this.props._inputEditable}
