@@ -14,8 +14,9 @@ import LabelWithInputSingleLineNormalNoBorder from "../component/LabelWithInputS
 import MyButtonComponent from "../component/MyButtonComponent";
 import { Actions } from "react-native-router-flux";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
-
-export default class LoginPage extends BaseComponent {
+import { List, Radio, } from "antd-mobile";
+const RadioItem = Radio.RadioItem;
+export default class SignUpPage extends BaseComponent {
 
 
     // 构造
@@ -24,27 +25,16 @@ export default class LoginPage extends BaseComponent {
         this.baseCommon = new BaseCommon({ ...props, backPress : (e) => this.onBackPress(e) });
         // 初始状态
         this.state = {
+            value : 0,  //0-学生，1-老师
+            name : '',
             telephone : '',
             password : '',
+            password2 : '',
         };
     }
 
     onBackPress(e) {
-        console.log('再按返回退出应用11');
-        console.log('lastBackTime', lastBackTime);
-
-        if ((lastBackTime + 2000) >= Date.now()) {
-            BackHandler.exitApp();
-            return true;
-        }
-        // 此处可以根据情况实现 点2次就退出应用，或者弹出rn视图等
-        //记录点击返回键的时间
-        lastBackTime = Date.now();
-        console.log('lastBackTime2', lastBackTime);
-
-        ViewUtil.showToast('再按返回退出应用');
-        console.log('再按返回退出应用');
-        return true;
+        return false;
     }
 
     componentDidMount() {
@@ -61,9 +51,12 @@ export default class LoginPage extends BaseComponent {
     }
 
     checkInfo() {
-
+        if (this.state.name == '' || StringUtil.trim(this.state.name).length == 0) {
+            ViewUtil.showToast('请输入姓名');
+            return false;
+        }
         if (this.state.telephone == '' || StringUtil.trim(this.state.telephone).length == 0) {
-            ViewUtil.showToast('请输入账号');
+            ViewUtil.showToast('请输入手机号');
             return false;
         }
 
@@ -71,7 +64,14 @@ export default class LoginPage extends BaseComponent {
             ViewUtil.showToast('请输入密码,不少于6位');
             return false;
         }
-
+        if (this.state.password2 == '' || StringUtil.trim(this.state.password2).length < 6) {
+            ViewUtil.showToast('请输入重复密码,不少于6位');
+            return false;
+        }
+        if (this.state.password != this.state.password2) {
+            ViewUtil.showToast('两次密码输入不一致');
+            return false;
+        }
         return true;
     }
 
@@ -103,22 +103,6 @@ export default class LoginPage extends BaseComponent {
 
     }
 
-    onPressLogin() {
-
-        if (!this.checkInfo()) {
-            return;
-        }
-
-        ViewUtil.showToastLoading(1000 * 60);
-
-        let bodyObj = {};
-        Actions.IndexPage();
-
-        // UserApi.login(bodyObj, (json) => {
-        //     this.loginCallBack(json);
-        // });
-
-    }
 
 
     onPressSignUp() {
@@ -133,13 +117,27 @@ export default class LoginPage extends BaseComponent {
 
     }
 
+    onChange = (value) => {
+        console.log('checkbox');
+        this.setState({
+            value,
+        });
+    };
+
     render() {
+        const { value, } = this.state;
+        const data = [
+            { value: 0, label: '学生' },
+            { value: 1, label: '老师' },
+        ];
+
         return (
             <MyViewComponent style={{ backgroundColor : ColorUtil.bgGray, flex : 1, }}>
 
                 {ViewUtil.getViewStatusBar()}
                 <HeaderNormalWithRightButtonComponent
-                    textCenter={'登 录'}
+                    textCenter={'注 册'}
+                    _leftBtnShouldShow={true}
                 />
                 <MyScrollViewComponent
                     keyboardShouldPersistTaps='always'
@@ -152,6 +150,23 @@ export default class LoginPage extends BaseComponent {
 
                     <MyViewComponent
                         style={[ StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite ]}>
+
+                        <List renderHeader={() => '选择身份'}>
+                            {data.map(i => (
+                                <RadioItem key={i.value} checked={value === i.value} onChange={() => this.onChange(i.value)}>
+                                    {i.label}
+                                </RadioItem>
+                            ))}
+                        </List>
+
+
+                        <LabelWithInputSingleLineNormalNoBorder _labelContent={'姓名        '} _inputPlaceHolder={'请输入姓名'}
+                                                                _style={[ StyleUtil.gStyles.gMarginTopBottom ]}
+                                                                _inputValue={this.state.name}
+                                                                _onChange={(value) => {
+                                                                    this.baseCommon.mounted && this.setState({ name : value });
+                                                                }}
+                        />
 
                         <LabelWithInputSingleLineNormalNoBorder _labelContent={'账号        '} _inputPlaceHolder={'请输入账号'}
                                                                 _style={[ StyleUtil.gStyles.gMarginTopBottom ]}
@@ -168,25 +183,19 @@ export default class LoginPage extends BaseComponent {
                                                                     this.baseCommon.mounted && this.setState({ password : value });
                                                                 }}
                         />
+                        <LabelWithInputSingleLineNormalNoBorder _labelContent={'重复密码'} _inputPlaceHolder={'不少于6位'}
+                                                                _type={'password'}
+                                                                _style={[ StyleUtil.gStyles.gMarginTopBottom ]}
+                                                                _inputValue={this.state.password2}
+                                                                _onChange={(value) => {
+                                                                    this.baseCommon.mounted && this.setState({ password2 : value });
+                                                                }}
+                        />
 
                         <MyButtonComponent
-                            textStyle={[ StyleUtil.gStyles.gButtonTextWhiteDefault, ]}
                             style={[ StyleUtil.gStyles.gButtonBlueDefault, {
                                 marginBottom : 20,
                                 marginTop : 40,
-                            }, ]}
-                            type={'primary'}
-                            onPress={() => {
-                                this.onPressLogin();
-                            }}
-                        >
-                            <Text> 登 录 </Text>
-                        </MyButtonComponent>
-
-                        <MyButtonComponent
-                            textStyle={[ StyleUtil.gStyles.gButtonTextWhiteDefault, ]}
-                            style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                marginBottom : 20,
                             }, ]}
                             type={'primary'}
                             onPress={() => {

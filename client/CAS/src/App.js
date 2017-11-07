@@ -4,6 +4,7 @@ import { ActionConst, Router, Scene } from "react-native-router-flux";
 import LoginPage from "./view/LoginPage";
 import IndexPage from "./view/IndexPage";
 import ShowScanPage from "./view/ShowScanPage";
+import SignUpPage from "./view/SignUpPage";
 
 import BaseCommon from "./common/BaseCommon";
 import * as GlobalDataUtil from "./util/GlobalDataUtil";
@@ -43,8 +44,9 @@ export default class App extends Component {
                 <Scene key="root">
 
                     <Scene key="LoginPage" component={LoginPage} type={ActionConst.RESET} initial={true}/>
-                    <Scene key="IndexPage" component={IndexPage} initial={true}/>
+                    <Scene key="IndexPage" component={IndexPage}/>
                     <Scene key="ShowScanPage" component={ShowScanPage}/>
+                    <Scene key="SignUpPage" component={SignUpPage}/>
 
                 </Scene>
             </Router>
