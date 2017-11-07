@@ -184,6 +184,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-camera')
     compile project(':react-native-smart-amap-location')
     compile project(':react-native-orientation')
     compile fileTree(dir: "libs", include: ["*.jar"])

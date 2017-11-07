@@ -39,6 +39,19 @@
     <!-- 更改设置 -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <!--*************************高德地图-定位所需要权限*************************-->
+
+
+
+    <!--*************************扫码所需要权限*************************-->
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!--*************************扫码所需要权限*************************-->
+
+
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="22" />

@@ -57,7 +57,10 @@ export default class IndexPage extends BaseComponent {
     onPressSignScan() {
 
         let bodyObj = {};
-        Actions.LoginPage();
+        alert('132');
+        Actions.ShowScanPage({onReadData:(value)=>{
+            console.log(value);
+        }});
 
     }
 
