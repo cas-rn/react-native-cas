@@ -6,6 +6,8 @@ import * as StyleUtil from "./StyleUtil";
 import Toast from "teaset/components/Toast/Toast";
 import * as ColorUtil from "./ColorUtil";
 import MyImageComponent from "../component/MyImageComponent";
+import * as StorageUtil from "./StorageUtil";
+import * as ConstantUtil from "./ConstantUtil";
 
 var ViewUtil = {
 
@@ -97,6 +99,8 @@ var ViewUtil = {
         );
     },
     popAllAndToLogin() {
+        StorageUtil.setKeyValue(ConstantUtil.keyTokenInfo, '');
+        StorageUtil.setKeyValue(ConstantUtil.keyUserInfo, null);
         Actions.LoginPage();
     },
 

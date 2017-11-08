@@ -17,6 +17,12 @@ var DateParseFormatUtil = {
         return this.formatDateLongOrStringToStringWithPatten(Number(date), 'MM月DD日 HH:mm');
     },
 
+    formatDateToLong10(date){
+        let dateLong = date.getTime();
+
+        return (dateLong - (dateLong % 1000)) / 1000;
+    },
+
     getCurrentTimeLong10(){
         let ct = this.getCurrentTimeLong13();
         ct = (ct - ct % 1000) / 1000;

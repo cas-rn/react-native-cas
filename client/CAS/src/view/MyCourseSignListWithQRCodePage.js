@@ -7,7 +7,6 @@ import { FlatList, InteractionManager, RefreshControl, Text, TouchableOpacity, V
 import * as StyleUtil from "../util/StyleUtil";
 import BaseComponent from "./BaseComponent";
 import * as ViewUtil from "../util/ViewUtil";
-import { Actions } from "react-native-router-flux";
 import * as SecretAsync from "../api/common/SecretAsync";
 import BaseCommon from "../common/BaseCommon";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
@@ -17,6 +16,9 @@ import * as PressOnlyOnceUtil from "../util/PressOnlyOnceUtil";
 // import { Swipeout } from "react-native-swipeout";
 import Swipeout from "react-native-swipeout";
 import * as ConfigUtil from "../util/ConfigUtil";
+import * as SizeUtil from "../util/SizeUtil";
+import * as ApiUtil from "../api/common/ApiUtil";
+import * as _ from "lodash";
 import MyString2QRCodeComponent from "../component/MyString2QRCodeComponent";
 
 var Platform = require('Platform');
@@ -32,6 +34,8 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
         curPageNum = 0;
         responseArr = [];
         submitArr = [];
+        this.hasMoreData = true;
+        this.isLoading = false;
     }
 
     constructor(props) {
@@ -39,15 +43,19 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
         this.initData();
         this.baseCommon = new BaseCommon({ ...props, });
 
+        let rightBtnShouldShow = true;
+        let headerTitle = '签到记录';
         this.state = {
             isLoading : false,
             isRefreshing : false,
+            rightBtnShouldShow : rightBtnShouldShow,
+            headerTitle : headerTitle,
+            qrcode : '',
             dataList : [
-                { key : '11', name : 'name' },
-                { key : '12', name : 'name' },
-                { key : '13', name : 'name' },
+                // { key : '11', lecture_name : 'name',lecture_introduction:'dddddd' },
+                // { key : '12', lecture_name : 'name',lecture_introduction:'dddddd' },
+                // { key : '13', lecture_name : 'name' ,lecture_introduction:'dddddd'},
             ],
-            selectedItemsPosition : [],
         };
     }
 
@@ -55,10 +63,18 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
         super.componentDidMount();
         this.baseCommon.componentDidMount();
 
-        this.initData();
         InteractionManager.runAfterInteractions(() => {
-            // this.getDataList();
+            // this.onFirstComeIn();
+
         });
+
+    }
+
+    onFirstComeIn() {
+        console.log('onfirstComeIn');
+        this.initData();
+        this.onOkPressed();
+        this.getDataList();
 
     }
 
@@ -92,7 +108,7 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
             />
         );
 
-        const row = (item) => {
+        let row = (item) => {
 
             return (
                 <View key={item.key}>
@@ -123,12 +139,12 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
                                 }}>
                                 <View style={{ flexDirection : 'row', }}>
                                     <Text>{'课程：'}</Text>
-                                    <Text>{item.name}</Text>
+                                    <Text>{item.lecture_name}</Text>
                                 </View>
 
                                 <View style={{ flexDirection : 'row', }}>
                                     <Text>{'描述：'}</Text>
-                                    <Text>{item.name}</Text>
+                                    <Text>{item.lecture_introduction}</Text>
                                 </View>
                             </View>
 
@@ -139,13 +155,25 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
             );
         };
 
+        let qrCodeView = null;
+        if (this.state.qrcode.length > 0) {
+            qrCodeView = (
+
+                <MyViewComponent style={{ alignItems : 'center', justifyContent : 'center', }}>
+                    <MyString2QRCodeComponent content={this.state.qrcode}/>
+
+                </MyViewComponent>
+
+            );
+        }
+
         return (
             <MyViewComponent style={{ backgroundColor : ColorUtil.bgGray }}>
 
-                <HeaderNormalWithRightButtonComponent textCenter="课程管理"
+                <HeaderNormalWithRightButtonComponent textCenter={this.state.headerTitle}
                                                       _leftBtnShouldShow={true}
-                                                      _rightBtnShouldShow={true}
-                                                      _textBtn={'确 定'}
+                                                      _rightBtnShouldShow={this.state.rightBtnShouldShow}
+                                                      _textBtn={'更新码'}
                                                       _onPressBtn={() => {
                                                           PressOnlyOnceUtil.onPress(() => {
                                                               this.onOkPressed();
@@ -153,11 +181,7 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
                                                       }}
                 />
 
-                <MyViewComponent style={{ alignItems : 'center', justifyContent : 'center', }}>
-                    <MyString2QRCodeComponent/>
-
-                </MyViewComponent>
-
+                {qrCodeView}
                 <FlatList ref="lv"
                           style={{
                               width : StyleUtil.size.width,
@@ -208,84 +232,118 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
     onPressItem(item) {
 
         console.log(item);
+
+    }
+
+    onOkPressedCallBack(json) {
+        if (json.code != ApiUtil.http.ERROR_CODE_SUCCESS_0) {
+            ViewUtil.dismissToastLoading();
+            //处理自定义异常
+            SecretAsync.onCustomExceptionNormal(json);
+
+            return;
+
+        }
+
+        if (json.response.qrcode != this.state.qrcode) {
+            this.setState({
+                qrcode : json.response.qrcode,
+            });
+        }
+
+        ViewUtil.showToast(ConstantUtil.toastDoSuccess);
     }
 
     onOkPressed() {
 
-        Actions.AddCoursePage();
+        console.log('ok');
+
+        let bodyObj = {
+            api_name : 'teacher.release.getsign',
+            release_lectures_id : this.props.data.id,
+        };
+        SecretAsync.postWithCommonErrorShow((jsonObj) => {
+            this.onOkPressedCallBack(jsonObj);
+        }, bodyObj);
 
     }
 
     //获取问题定位数据
     getDataList() {
-        // console.log('ProblemList.getDataList');
-        if (totalPageNum > curPageNum) {
-            var bodyObj = {};
+        console.log('ProblemList.getDataList');
+        console.log('this.hasMoreData', this.hasMoreData);
+        console.log('this.isLoading', this.isLoading);
+        if (this.hasMoreData && !this.isLoading) {
+            this.isLoading = true;
+            this.baseCommon.mounted && this.setState({
+                isRefreshing : true,
+                dataList : this.rData,
+            });
+            let bodyObj = {};
             curPageNum = curPageNum + 1;
-            bodyObj.order_id = this.props.order_id;
-            bodyObj.warehouse_id = this.props.warehouse_id;
-            bodyObj.current_page = curPageNum;
+            bodyObj.page = curPageNum;
+            bodyObj.pagesize = 100;
+            bodyObj.api_name = 'teacher.release.signlog';
+            bodyObj.release_lectures_id = this.props.data.id;
 
             if (curPageNum == 1) {
                 ViewUtil.showToastLoading();
             }
 
-            // PartsApi.getPartsSelect(bodyObj, (jsonObj) => {
-            //     this.onGetDataListCallback(jsonObj);
-            // });
-        } else {
-            this.baseCommon.mounted && this.setState(
-                {
-                    isLoading : false,
-                    isRefreshing : false,
-                }
-            );
+            SecretAsync.postWithCommonErrorShow((jsonObj) => {
+                this.onGetDataListCallback(jsonObj);
+            }, bodyObj);
 
         }
     }
 
     onGetDataListCallback(jsonObj) {
+        ViewUtil.dismissToastLoading();
 
-        if (jsonObj.error_msg.code != URLConf.http.ERROR_CODE_SUCCESS_0) {
-            ViewUtil.dismissToastLoading();
+        if (jsonObj.code != ApiUtil.http.ERROR_CODE_SUCCESS_0) {
             //处理自定义异常
             SecretAsync.onCustomExceptionNormal(jsonObj);
+            this.isLoading = false;
             this.baseCommon.mounted && this.setState({
                 isLoading : false,
                 isRefreshing : false,
             });
             return;
         }
-        totalPageNum = jsonObj.response.data.count / ConstantUtil.size.pageSize + 1;
+        // totalPageNum = jsonObj.response.list.count / SizeUtil.pageSize + 1;
 
         if (!this.rData) {
             this.rData = [];
         }
-        //
-        // let _retArr = jsonObj.response.data;
-        //
-        // let _mOkArr = MyUtil.getPartListData(_retArr);
-        // responseArr = responseArr.concat(_retArr);
-        // this.rData = this.rData.concat(_mOkArr);
-        // this.rData = _.cloneDeep(this.rData);
-        // let selectedItemsPosition = [];
-        // selectedItemsPosition = MyUtil.getSelectedItemsPosition(this.rData, selectedItemsPosition);
-        //
-        // this.baseCommon.mounted && this.setState({
-        //     selectedItemsPosition : selectedItemsPosition,
-        //     dataList : this.state.dataList.cloneWithRows(this.rData),
-        //     isLoading : false,
-        //     isRefreshing : false,
-        // });
+
+        let _retArr = jsonObj.response.list;
+
+        this.isLoading = false;
+
+        if (_retArr.length < SizeUtil.pageSize) {
+            this.hasMoreData = false;
+        } else {
+            this.hasMoreData = true;
+        }
+        let mOkArr = [];
+        mOkArr = TmpDataUtil.getDataList(_retArr);
+
+        this.rData = this.rData.concat(mOkArr);
+        this.rData = _.cloneDeep(this.rData);
+        this.baseCommon.mounted && this.setState({
+            dataList : this.rData,
+            isLoading : false,
+            isRefreshing : false,
+        });
 
         ViewUtil.dismissToastLoading();
 
     }
 
     onEndReached(event) {
-        // console.log('reach end', event);
+        console.log('reach end', event);
 
-        if (this.state.isLoading || this.state.isRefreshing || totalPageNum == curPageNum) {
+        if (this.state.isLoading || this.state.isRefreshing || !this.hasMoreData || this.isLoading) {
             return;
         }
         // console.log('reach end', event);
@@ -296,22 +354,15 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
     }
 
     onRefresh() {
-        // alert('onRefresh');
+        console.log('onRefresh');
         if (this.state.isRefreshing) {
             return;
         }
 
-        this.initData();
         curPageNum = 0;
         this.rData = [];
-        this.baseCommon.mounted && this.setState({
-            isRefreshing : true,
-            dataList : this.rData,
-            selectedItemsPosition : [],
-        });
 
-        // console.log('onRefresh1');
-        this.getDataList();
+        this.onFirstComeIn();
 
         setTimeout(() => {
             if (this.state.isRefreshing) {

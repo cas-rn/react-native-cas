@@ -1,6 +1,5 @@
 import React from "react";
 import { Text } from "react-native";
-import * as ConstantUtil from "../util/ConstantUtil";
 import * as StyleUtil from "../util/StyleUtil";
 import * as StringUtil from "../util/StringUtil";
 import BaseComponent from "./BaseComponent";
@@ -15,6 +14,7 @@ import MyButtonComponent from "../component/MyButtonComponent";
 import { Actions } from "react-native-router-flux";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
 import { List, Radio } from "antd-mobile";
+import * as ApiUtil from "../api/common/ApiUtil";
 const RadioItem = Radio.RadioItem;
 export default class SignUpPage extends BaseComponent {
 
@@ -25,7 +25,7 @@ export default class SignUpPage extends BaseComponent {
         this.baseCommon = new BaseCommon({ ...props, backPress : (e) => this.onBackPress(e) });
         // 初始状态
         this.state = {
-            value : 0,  //0-学生，1-老师
+            value : 2,  //1-老师,2-学生，
             name : '',
             telephone : '',
             password : '',
@@ -75,8 +75,8 @@ export default class SignUpPage extends BaseComponent {
         return true;
     }
 
-    loginCallBack(json) {
-        if (json.code != URLConf.http.ERROR_CODE_SUCCESS_0) {
+    onPressSignUpCallback(json) {
+        if (json.code != ApiUtil.http.ERROR_CODE_SUCCESS_0) {
             ViewUtil.dismissToastLoading();
             //处理自定义异常
             SecretAsync.onCustomExceptionNormal(json);
@@ -85,27 +85,29 @@ export default class SignUpPage extends BaseComponent {
 
         }
 
-        // if (URLConf.http.RET_TYPE_SUCCESS == retType) {
-        // alert(StringUtil.object2Json(json));
-        var userInfo = {
-            user_id : json.response.user_id,
-            user_name : json.response.user_name,
-            user_telephone : StringUtil.trim(this.state.telephone),
-            user_password : StringUtil.trim(this.state.password),
-        };
-        gUserInfo = userInfo;
-        storage.save({ key : ConstantUtil.strings.keyUserInfo, data : userInfo });
-        var tokenInfo = {
-            token : json.response.token,
-            expired_time : json.response.expired_time,
-        };
-        storage.save({ key : ConstantUtil.strings.keyTokenInfo, data : tokenInfo });
+        ViewUtil.showToast('操作成功');
+        Actions.pop();
 
+        return;
     }
 
     onPressSignUp() {
 
-        Actions.SignUpPage();
+        if (!this.checkInfo()) {
+            return;
+        }
+
+        let bodyObj = {
+            api_name : 'home.register.index',
+            username : this.state.name.trim(),
+            phone : this.state.telephone.trim(),
+            password : this.state.password.trim(),
+            role : this.state.value,
+
+        };
+        SecretAsync.postWithCommonErrorShow((jsonObj) => {
+            this.onPressSignUpCallback(jsonObj);
+        }, bodyObj);
 
     }
 
@@ -125,7 +127,7 @@ export default class SignUpPage extends BaseComponent {
     render() {
         const { value, } = this.state;
         const data = [
-            { value : 0, label : '学生' },
+            { value : 2, label : '学生' },
             { value : 1, label : '老师' },
         ];
 

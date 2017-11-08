@@ -17,6 +17,12 @@ import * as PressOnlyOnceUtil from "../util/PressOnlyOnceUtil";
 // import { Swipeout } from "react-native-swipeout";
 import Swipeout from "react-native-swipeout";
 import * as ConfigUtil from "../util/ConfigUtil";
+import * as SizeUtil from "../util/SizeUtil";
+import * as ApiUtil from "../api/common/ApiUtil";
+import * as _ from "lodash";
+import ArrayUtil from "../util/ArrayUtil";
+import * as DateparseFormatUtil from "../util/DateParseFormatUtil";
+import MyString2QRCodeComponent from "../component/MyString2QRCodeComponent";
 
 var Platform = require('Platform');
 
@@ -31,6 +37,8 @@ export default class MyCourseListManagePage extends BaseComponent {
         curPageNum = 0;
         responseArr = [];
         submitArr = [];
+        this.hasMoreData = true;
+        this.isLoading = false;
     }
 
     constructor(props) {
@@ -38,15 +46,30 @@ export default class MyCourseListManagePage extends BaseComponent {
         this.initData();
         this.baseCommon = new BaseCommon({ ...props, });
 
+        let rightBtnShouldShow = false;
+        let headerTitle = '';
+        if (this.props.typePage == ConstantUtil.typePageSelectCourse) {
+            rightBtnShouldShow = false;
+            headerTitle = '选择课程';
+        } else if (this.props.typePage == ConstantUtil.typePageManageMyCourse) {
+            rightBtnShouldShow = true;
+            headerTitle = '课程管理';
+
+        } else if (this.props.typePage == ConstantUtil.typePageReleasedCourse) {
+            rightBtnShouldShow = false;
+            headerTitle = '已发布课程';
+        }
+
         this.state = {
             isLoading : false,
             isRefreshing : false,
+            rightBtnShouldShow : rightBtnShouldShow,
+            headerTitle : headerTitle,
             dataList : [
-                { key : '11', name : 'name' },
-                { key : '12', name : 'name' },
-                { key : '13', name : 'name' },
+                // { key : '11', lecture_name : 'name',lecture_introduction:'dddddd' },
+                // { key : '12', lecture_name : 'name',lecture_introduction:'dddddd' },
+                // { key : '13', lecture_name : 'name' ,lecture_introduction:'dddddd'},
             ],
-            selectedItemsPosition : [],
         };
     }
 
@@ -54,10 +77,17 @@ export default class MyCourseListManagePage extends BaseComponent {
         super.componentDidMount();
         this.baseCommon.componentDidMount();
 
-        this.initData();
         InteractionManager.runAfterInteractions(() => {
-            // this.getDataList();
+            // this.onFirstComeIn();
+
         });
+
+    }
+
+    onFirstComeIn() {
+        console.log('onfirstComeIn');
+        this.initData();
+        this.getDataList();
 
     }
 
@@ -91,66 +121,142 @@ export default class MyCourseListManagePage extends BaseComponent {
             />
         );
 
-        const row = (item) => {
-
-            return (
-                <View key={item.key}>
-                    <Swipeout right={
-                        [
-                            {
-                                text : 'Button',
-                                backgroundColor : ColorUtil.redTheme,
-                                onPress : () => {
-                                    alert('123' + item.key);
-                                },
-                            }
-                        ]
-                    }>
-                        <TouchableOpacity
-                            activeOpacity={ConfigUtil.customActiveOpacity}
-                            onPress={() => {
-                                this.onPressItem(item);
-
-                            }}>
-
-                            <View
-                                style={{
-                                    paddingBottom : 5,
-                                    paddingTop : 5,
-                                    paddingLeft : 20,
-                                    paddingRight : 20
-                                }}>
-                                <View style={{ flexDirection : 'row', }}>
-                                    <Text>{'课程：'}</Text>
-                                    <Text>{item.name}</Text>
-                                </View>
-
-                                <View style={{ flexDirection : 'row', }}>
-                                    <Text>{'描述：'}</Text>
-                                    <Text>{item.name}</Text>
-                                </View>
-                            </View>
-
-                        </TouchableOpacity>
-                    </Swipeout>
-
-                </View>
-            );
+        let row = () => {
+            return null;
         };
+
+        if (this.props.typePage == ConstantUtil.typePageSelectCourse
+            || this.props.typePage == ConstantUtil.typePageManageMyCourse
+        ) {
+            row = (item) => {
+
+                return (
+                    <View key={item.key}>
+                        <Swipeout right={
+                            [
+                                {
+                                    text : 'Button',
+                                    backgroundColor : ColorUtil.redTheme,
+                                    onPress : () => {
+                                        alert('123' + item.key);
+                                    },
+                                }
+                            ]
+                        }>
+                            <TouchableOpacity
+                                activeOpacity={ConfigUtil.customActiveOpacity}
+                                onPress={() => {
+                                    this.onPressItem(item);
+
+                                }}>
+
+                                <View
+                                    style={{
+                                        paddingBottom : 5,
+                                        paddingTop : 5,
+                                        paddingLeft : 20,
+                                        paddingRight : 20
+                                    }}>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'课程：'}</Text>
+                                        <Text>{item.lecture_name}</Text>
+                                    </View>
+
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'描述：'}</Text>
+                                        <Text>{item.lecture_introduction}</Text>
+                                    </View>
+                                </View>
+
+                            </TouchableOpacity>
+                        </Swipeout>
+
+                    </View>
+                );
+            };
+
+        } else if (this.props.typePage == ConstantUtil.typePageReleasedCourse) {
+
+            row = (item) => {
+
+                return (
+                    <View key={item.key}>
+                        <Swipeout right={
+                            [
+                                {
+                                    text : 'Button',
+                                    backgroundColor : ColorUtil.redTheme,
+                                    onPress : () => {
+                                        alert('123' + item.key);
+                                    },
+                                }
+                            ]
+                        }>
+                            <TouchableOpacity
+                                activeOpacity={ConfigUtil.customActiveOpacity}
+                                onPress={() => {
+                                    this.onPressItem(item);
+
+                                }}>
+
+                                <View
+                                    style={{
+                                        paddingBottom : 5,
+                                        paddingTop : 5,
+                                        paddingLeft : 20,
+                                        paddingRight : 20
+                                    }}>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'课程：'}</Text>
+                                        <Text>{item.lecture_name}</Text>
+                                    </View>
+
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'地址：'}</Text>
+                                        <Text>{item.room}</Text>
+                                    </View>
+
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'时间：'}</Text>
+                                        <Text>{DateparseFormatUtil.formatDateLongOrStringToStringMinuteLong10(item.schooltime)}</Text>
+                                    </View>
+                                </View>
+
+                            </TouchableOpacity>
+                        </Swipeout>
+
+                    </View>
+                );
+            };
+        }
+
+        let qrCodeView = null;
+        if (false) {
+            qrCodeView = (
+
+                <MyViewComponent style={{ alignItems : 'center', justifyContent : 'center', }}>
+                    <MyString2QRCodeComponent />
+
+                </MyViewComponent>
+
+            );
+        }
 
         return (
             <MyViewComponent style={{ backgroundColor : ColorUtil.bgGray }}>
 
-                <HeaderNormalWithRightButtonComponent textCenter="课程管理"
+                <HeaderNormalWithRightButtonComponent textCenter={this.state.headerTitle}
                                                       _leftBtnShouldShow={true}
-                                                      _rightBtnShouldShow={true}
-                                                      _textBtn={'确 定'}
+                                                      _rightBtnShouldShow={this.state.rightBtnShouldShow}
+                                                      _textBtn={'添 加'}
                                                       _onPressBtn={() => {
                                                           PressOnlyOnceUtil.onPress(() => {
                                                               this.onOkPressed();
                                                           });
                                                       }}
                 />
+
+                {qrCodeView}
                 <FlatList ref="lv"
                           style={{
                               width : StyleUtil.size.width,
@@ -201,84 +307,136 @@ export default class MyCourseListManagePage extends BaseComponent {
     onPressItem(item) {
 
         console.log(item);
+
+        if (this.props.typePage == ConstantUtil.typePageSelectCourse) {
+            this.props.setData(item);
+            Actions.pop();
+        } else if (this.props.typePage == ConstantUtil.typePageManageMyCourse) {
+
+        } else if (this.props.typePage == ConstantUtil.typePageReleasedCourse) {
+            Actions.MyCourseSignListWithQRCodePage({ data : item, });
+            // Actions.MyCourseListManagePage({typePage:ConstantUtil.typePageSignListWithQRCode});
+
+        }
     }
 
     onOkPressed() {
 
-        Actions.AddCoursePage();
+        if (this.props.typePage == ConstantUtil.typePageSelectCourse) {
+
+        } else if (this.props.typePage == ConstantUtil.typePageManageMyCourse) {
+            Actions.AddCoursePage({
+                setData : (data) => {
+                    this.rData = ArrayUtil.addObjToArrIndex0(data, this.rData);
+                    this.rData = _.cloneDeep(this.rData);
+                    this.baseCommon.mounted && this.setState({
+                        dataList : this.rData,
+                        isLoading : false,
+                        isRefreshing : false,
+                    });
+
+                }
+            });
+        } else if (this.props.typePage == ConstantUtil.typePageReleasedCourse) {
+
+            return;
+        }
 
     }
 
     //获取问题定位数据
     getDataList() {
-        // console.log('ProblemList.getDataList');
-        if (totalPageNum > curPageNum) {
-            var bodyObj = {};
+        console.log('ProblemList.getDataList');
+        console.log('this.hasMoreData', this.hasMoreData);
+        console.log('this.isLoading', this.isLoading);
+        if (this.hasMoreData && !this.isLoading) {
+            this.isLoading = true;
+            this.baseCommon.mounted && this.setState({
+                isRefreshing : true,
+                dataList : this.rData,
+            });
+            let bodyObj = {};
             curPageNum = curPageNum + 1;
-            bodyObj.order_id = this.props.order_id;
-            bodyObj.warehouse_id = this.props.warehouse_id;
-            bodyObj.current_page = curPageNum;
+            bodyObj.page = curPageNum;
+            bodyObj.pagesize = SizeUtil.pageSize;
+
+            if (this.props.typePage == ConstantUtil.typePageSelectCourse
+                || this.props.typePage == ConstantUtil.typePageManageMyCourse
+            ) {
+                bodyObj.api_name = 'teacher.lectures.getlist';
+
+            } else if (this.props.typePage == ConstantUtil.typePageReleasedCourse) {
+                bodyObj.api_name = 'teacher.release.getlist';
+
+            }
 
             if (curPageNum == 1) {
                 ViewUtil.showToastLoading();
             }
 
-            // PartsApi.getPartsSelect(bodyObj, (jsonObj) => {
-            //     this.onGetDataListCallback(jsonObj);
-            // });
-        } else {
-            this.baseCommon.mounted && this.setState(
-                {
-                    isLoading : false,
-                    isRefreshing : false,
-                }
-            );
+            SecretAsync.postWithCommonErrorShow((jsonObj) => {
+                this.onGetDataListCallback(jsonObj);
+            }, bodyObj);
 
         }
     }
 
     onGetDataListCallback(jsonObj) {
+        ViewUtil.dismissToastLoading();
 
-        if (jsonObj.error_msg.code != URLConf.http.ERROR_CODE_SUCCESS_0) {
-            ViewUtil.dismissToastLoading();
+        if (jsonObj.code != ApiUtil.http.ERROR_CODE_SUCCESS_0) {
             //处理自定义异常
             SecretAsync.onCustomExceptionNormal(jsonObj);
+            this.isLoading = false;
             this.baseCommon.mounted && this.setState({
                 isLoading : false,
                 isRefreshing : false,
             });
             return;
         }
-        totalPageNum = jsonObj.response.data.count / ConstantUtil.size.pageSize + 1;
+        // totalPageNum = jsonObj.response.list.count / SizeUtil.pageSize + 1;
 
         if (!this.rData) {
             this.rData = [];
         }
-        //
-        // let _retArr = jsonObj.response.data;
-        //
-        // let _mOkArr = MyUtil.getPartListData(_retArr);
-        // responseArr = responseArr.concat(_retArr);
-        // this.rData = this.rData.concat(_mOkArr);
-        // this.rData = _.cloneDeep(this.rData);
-        // let selectedItemsPosition = [];
-        // selectedItemsPosition = MyUtil.getSelectedItemsPosition(this.rData, selectedItemsPosition);
-        //
-        // this.baseCommon.mounted && this.setState({
-        //     selectedItemsPosition : selectedItemsPosition,
-        //     dataList : this.state.dataList.cloneWithRows(this.rData),
-        //     isLoading : false,
-        //     isRefreshing : false,
-        // });
+
+        let _retArr = jsonObj.response.list;
+
+        this.isLoading = false;
+
+        if (_retArr.length < SizeUtil.pageSize) {
+            this.hasMoreData = false;
+        } else {
+            this.hasMoreData = true;
+        }
+        let mOkArr = [];
+
+        if (this.props.typePage == ConstantUtil.typePageSelectCourse
+            || this.props.typePage == ConstantUtil.typePageManageMyCourse
+            || this.props.typePage == ConstantUtil.typePageReleasedCourse
+        ) {
+            mOkArr = TmpDataUtil.getDataList(_retArr);
+
+        } else if (this.props.typePage == '1') {
+
+        }
+
+        this.rData = this.rData.concat(mOkArr);
+        this.rData = _.cloneDeep(this.rData);
+        this.baseCommon.mounted && this.setState({
+            dataList : this.rData,
+            isLoading : false,
+            isRefreshing : false,
+        });
 
         ViewUtil.dismissToastLoading();
 
     }
 
     onEndReached(event) {
-        // console.log('reach end', event);
+        console.log('reach end', event);
 
-        if (this.state.isLoading || this.state.isRefreshing || totalPageNum == curPageNum) {
+        if (this.state.isLoading || this.state.isRefreshing || !this.hasMoreData || this.isLoading) {
             return;
         }
         // console.log('reach end', event);
@@ -289,22 +447,15 @@ export default class MyCourseListManagePage extends BaseComponent {
     }
 
     onRefresh() {
-        // alert('onRefresh');
+        console.log('onRefresh');
         if (this.state.isRefreshing) {
             return;
         }
 
-        this.initData();
         curPageNum = 0;
         this.rData = [];
-        this.baseCommon.mounted && this.setState({
-            isRefreshing : true,
-            dataList : this.rData,
-            selectedItemsPosition : [],
-        });
 
-        // console.log('onRefresh1');
-        this.getDataList();
+        this.onFirstComeIn();
 
         setTimeout(() => {
             if (this.state.isRefreshing) {

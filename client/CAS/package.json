@@ -21,8 +21,9 @@
 		"react-native-storage": "^0.2.2",
 		"react-native-swipeout": "^2.3.1",
 		"react-native-touch-once": "^1.0.3",
-		"teaset": "^0.4.6"
-	},
+		"teaset": "^0.4.6",
+      "lodash" : "latest"
+    },
 	"devDependencies": {
 		"babel-jest": "21.2.0",
 		"babel-preset-react-native": "4.0.0",

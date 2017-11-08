@@ -15,6 +15,7 @@ import MyButtonComponent from "../component/MyButtonComponent";
 import { Actions } from "react-native-router-flux";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
 import { List } from "antd-mobile";
+import * as ApiUtil from "../api/common/ApiUtil";
 
 export default class LoginPage extends BaseComponent {
 
@@ -77,7 +78,7 @@ export default class LoginPage extends BaseComponent {
     }
 
     loginCallBack(json) {
-        if (json.code != URLConf.http.ERROR_CODE_SUCCESS_0) {
+        if (json.code != ApiUtil.http.ERROR_CODE_SUCCESS_0) {
             ViewUtil.dismissToastLoading();
             //处理自定义异常
             SecretAsync.onCustomExceptionNormal(json);
@@ -88,19 +89,22 @@ export default class LoginPage extends BaseComponent {
 
         // if (URLConf.http.RET_TYPE_SUCCESS == retType) {
         // alert(StringUtil.object2Json(json));
-        var userInfo = {
-            user_id : json.response.user_id,
-            user_name : json.response.user_name,
+        let userInfo = {
+            user_id : json.response.user_info.id,
+            user_name : json.response.user_info.username,
             user_telephone : StringUtil.trim(this.state.telephone),
             user_password : StringUtil.trim(this.state.password),
+            role : json.response.user_info.role + '',
         };
         gUserInfo = userInfo;
-        storage.save({ key : ConstantUtil.strings.keyUserInfo, data : userInfo });
-        var tokenInfo = {
-            token : json.response.token,
-            expired_time : json.response.expired_time,
-        };
-        storage.save({ key : ConstantUtil.strings.keyTokenInfo, data : tokenInfo });
+        storage.save({ key : ConstantUtil.keyUserInfo, data : userInfo });
+        let tokenInfo = json.response.user_token;
+        gAccessTokenInfo = tokenInfo;
+        hasLogin = true;
+        storage.save({ key : ConstantUtil.keyTokenInfo, data : tokenInfo });
+
+        ViewUtil.showToast('登录成功');
+        Actions.IndexPage({ role : gUserInfo.role });
 
     }
 
@@ -112,12 +116,15 @@ export default class LoginPage extends BaseComponent {
 
         ViewUtil.showToastLoading(1000 * 60);
 
-        let bodyObj = {};
-        Actions.IndexPage();
+        let bodyObj = {
+            api_name : 'home.login.index',
+            phone : this.state.telephone.trim(),
+            password : this.state.password.trim(),
 
-        // UserApi.login(bodyObj, (json) => {
-        //     this.loginCallBack(json);
-        // });
+        };
+        SecretAsync.postWithCommonErrorShow((jsonObj) => {
+            this.loginCallBack(jsonObj);
+        }, bodyObj);
 
     }
 

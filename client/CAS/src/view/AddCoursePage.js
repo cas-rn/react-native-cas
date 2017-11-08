@@ -15,6 +15,9 @@ import MyScrollViewComponent from "../component/MyScrollViewComponent";
 import * as PressOnlyOnceUtil from "../util/PressOnlyOnceUtil";
 import * as ColorUtil from "../util/ColorUtil";
 import MyPushCardInputAreaComponent from "../component/MyPushCardInputAreaComponent";
+import * as ApiUtil from "../api/common/ApiUtil";
+import * as ConstantUtil from "../util/ConstantUtil";
+import { Actions } from "react-native-router-flux";
 
 export default class AddCoursePage extends BaseComponent {
     constructor(props) {
@@ -22,11 +25,7 @@ export default class AddCoursePage extends BaseComponent {
         this.baseCommon = new BaseCommon({ ...props, });
 
         this.state = {
-            // ...this.state,
-
-            passwordNow : '',
-            password : '',
-            password2 : '',
+            lecture_name : '',
         };
     }
 
@@ -44,8 +43,8 @@ export default class AddCoursePage extends BaseComponent {
         this.action = {
             "title" : "描述",                         // 显示的标题
             "subTitle" : "",                    // 显示的副标题，非必须
-            "valueKey" : "age",                  // 字段名称
-            "value" : "66",
+            "valueKey" : "lecture_introduction",                  // 字段名称
+            "value" : "",
             "default" : "",
         };
     }
@@ -54,6 +53,57 @@ export default class AddCoursePage extends BaseComponent {
         super.componentWillUnmount();
         this.baseCommon.componentWillUnmount();
         // console.log('componentWillUnmount');
+    }
+
+    checkInfo() {
+
+        if (this.state.lecture_name == '' || StringUtil.trim(this.state.lecture_name).length == 0) {
+            ViewUtil.showToast('请输入课程');
+            return false;
+        }
+
+        if (this.action.value == '' || StringUtil.trim(this.action.value).length == 0) {
+            ViewUtil.showToast('请输入描述');
+            return false;
+        }
+
+        return true;
+    }
+
+    onOkPressedCallBack(json) {
+        if (json.code != ApiUtil.http.ERROR_CODE_SUCCESS_0) {
+            ViewUtil.dismissToastLoading();
+            //处理自定义异常
+            SecretAsync.onCustomExceptionNormal(json);
+
+            return;
+
+        }
+        ViewUtil.showToast(ConstantUtil.toastDoSuccess);
+        let key = new Date().getTime() + '';
+        this.props.setData({ key : key, id : key, lecture_name : this.state.lecture_name, lecture_introduction : this.action.value.trim(), });
+        Actions.pop();
+    }
+
+    onOkPressed() {
+
+        if (!this.checkInfo()) {
+            return;
+        }
+
+        ViewUtil.showToastLoading();
+
+        //发布课程
+        let bodyObj = {
+            api_name : 'teacher.lectures.add',
+            lecture_name : this.state.lecture_name.trim(),
+            lecture_introduction : this.action.value.trim(),
+
+        };
+        SecretAsync.postWithCommonErrorShow((jsonObj) => {
+            this.onOkPressedCallBack(jsonObj);
+        }, bodyObj);
+
     }
 
     render() {
@@ -99,10 +149,9 @@ export default class AddCoursePage extends BaseComponent {
                             <List.Item>
 
                                 <LabelWithInputSingleLineNormalNoBorderComponent _labelContent={'课程    '}
-                                                                                 _type={'password'}
-                                                                                 _inputValue={this.state.passwordNow}
+                                                                                 _inputValue={this.state.lecture_name}
                                                                                  _onChange={(value) => {
-                                                                                     this.baseCommon.mounted && this.setState({ passwordNow : value });
+                                                                                     this.baseCommon.mounted && this.setState({ lecture_name : value });
                                                                                  }}
                                 />
                             </List.Item>
@@ -116,9 +165,9 @@ export default class AddCoursePage extends BaseComponent {
                                 marginBottom : 20,
                                 marginTop : 40,
                             }, ]}
-                            onClick={() => {
+                            onPress={() => {
                                 PressOnlyOnceUtil.onPress(() => {
-                                    this.onResetPassPressed();
+                                    this.onOkPressed();
                                 });
                             }}
                         >
@@ -131,67 +180,6 @@ export default class AddCoursePage extends BaseComponent {
 
             </MyViewComponent>
         );
-    }
-
-    checkInfo() {
-
-        if (this.state.passwordNow == '' || StringUtil.trim(this.state.passwordNow).length == 0) {
-            ViewUtil.showToast('请输入原密码');
-            return false;
-        }
-
-        if (this.state.password == '' || StringUtil.trim(this.state.password).length < 6) {
-            ViewUtil.showToast('请输入新密码,不少于6位');
-            return false;
-        }
-        if (this.state.password2 == '' || StringUtil.trim(this.state.password2).length < 6) {
-            ViewUtil.showToast('请输入重复密码,不少于6位');
-            return false;
-        }
-        if (this.state.password != this.state.password2) {
-            ViewUtil.showToast('两次密码输入不一致');
-            return;
-        }
-
-        return true;
-    }
-
-    onResetPassPressed() {
-
-        if (!this.checkInfo()) {
-            return;
-        }
-
-        ViewUtil.showToastLoading();
-
-        // var bodyObj = {
-        //     [URLConf.http.API_NAME] : URLConf.http.PARAM_API_USER__USER_CHANGE_PASSWORD,
-        //     [URLConf.http.PARAM_OLD_USER_PASSWORD] : this.state.passwordNow,
-        //     [URLConf.http.PARAM_NEW_USER_PASSWORD] : this.state.password,
-        // };
-        //
-        // UserApi.modifyPass(bodyObj, (jsonObj) => {
-        //     this.onResetPassCallback(jsonObj);
-        // });
-
-    }
-
-    onResetPassCallback(jsonObj) {
-        if (jsonObj.code != URLConf.http.ERROR_CODE_SUCCESS_0) {
-            ViewUtil.dismissToastLoading();
-            //处理自定义异常
-            SecretAsync.onCustomExceptionNormal(jsonObj);
-            return;
-        }
-
-        ViewUtil.dismissToastLoading();
-
-        // alert(jsonObj);
-        // alert(StringUtil.object2Json(jsonObj));
-
-        ViewUtil.showToast('重置成功');
-        // Actions.Success();
-
     }
 
 }

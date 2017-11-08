@@ -14,6 +14,7 @@ import MyViewComponent from "../component/MyViewComponent";
 import MyScrollViewComponent from "../component/MyScrollViewComponent";
 import * as PressOnlyOnceUtil from "../util/PressOnlyOnceUtil";
 import * as ColorUtil from "../util/ColorUtil";
+import * as ApiUtil from "../api/common/ApiUtil";
 
 export default class ModifyPassPage extends BaseComponent {
     constructor(props) {
@@ -109,7 +110,7 @@ export default class ModifyPassPage extends BaseComponent {
                                 marginBottom : 20,
                                 marginTop : 40,
                             }, ]}
-                            onClick={() => {
+                            onPress={() => {
                                 PressOnlyOnceUtil.onPress(() => {
                                     this.onResetPassPressed();
                                 });
@@ -157,6 +158,15 @@ export default class ModifyPassPage extends BaseComponent {
 
         ViewUtil.showToastLoading();
 
+        let bodyObj = {
+            api_name : 'home.login.uppassword',
+            password : this.state.passwordNow,
+            newpassword : this.state.password,
+        };
+        SecretAsync.postWithCommonErrorShow((jsonObj) => {
+            this.onResetPassCallback(jsonObj);
+        }, bodyObj);
+
         // var bodyObj = {
         //     [URLConf.http.API_NAME] : URLConf.http.PARAM_API_USER__USER_CHANGE_PASSWORD,
         //     [URLConf.http.PARAM_OLD_USER_PASSWORD] : this.state.passwordNow,
@@ -170,7 +180,7 @@ export default class ModifyPassPage extends BaseComponent {
     }
 
     onResetPassCallback(jsonObj) {
-        if (jsonObj.code != URLConf.http.ERROR_CODE_SUCCESS_0) {
+        if (jsonObj.code != ApiUtil.http.ERROR_CODE_SUCCESS_0) {
             ViewUtil.dismissToastLoading();
             //处理自定义异常
             SecretAsync.onCustomExceptionNormal(jsonObj);
@@ -183,6 +193,7 @@ export default class ModifyPassPage extends BaseComponent {
         // alert(StringUtil.object2Json(jsonObj));
 
         ViewUtil.showToast('重置成功');
+        ViewUtil.popAllAndToLogin();
         // Actions.Success();
 
     }

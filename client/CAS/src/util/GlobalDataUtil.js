@@ -96,10 +96,7 @@ let GlobalDataUtil = {
         };
 
         global.gUserInfo = null;
-        global.gAccessTokenInfo = {
-            access_token : '',
-            expired_time : '',
-        };
+        global.gAccessTokenInfo = '';
         global.hasLogin = null;
 
     },

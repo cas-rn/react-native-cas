@@ -20,6 +20,8 @@ export async function postWithCommonErrorShow(callback = () => {
 
 export function onCustomExceptionNormal(json) {
     console.log('onCustomExceptionNormal' + json);
+    ViewUtil.showToast(json.error_msg);
+
     if (ApiUtil.http.ERROR_CODE_ACCESS_TOKEN_IS_INCORRECT == json.code) {
 
     } else {

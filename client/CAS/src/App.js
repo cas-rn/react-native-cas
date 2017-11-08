@@ -12,7 +12,6 @@ import AddCoursePage from "./view/AddCoursePage";
 import MyCourseSignListWithQRCodePage from "./view/MyCourseSignListWithQRCodePage";
 
 import BaseCommon from "./common/BaseCommon";
-import * as GlobalDataUtil from "./util/GlobalDataUtil";
 
 export default class App extends Component {
     constructor(props) {
@@ -29,7 +28,6 @@ export default class App extends Component {
 
     componentWillMount() {
         this.baseCommon.componentWillMount();
-        GlobalDataUtil.init();
 
     }
 
@@ -48,15 +46,15 @@ export default class App extends Component {
             >
                 <Scene key="root">
 
-                    <Scene key="LoginPage" component={LoginPage} type={ActionConst.RESET} initial={true}/>
-                    <Scene key="IndexPage" component={IndexPage}/>
+                    <Scene key="LoginPage" component={LoginPage} type={ActionConst.RESET} initial={!hasLogin}/>
+                    <Scene key="IndexPage" component={IndexPage} initial={hasLogin}/>
                     <Scene key="ShowScanPage" component={ShowScanPage}/>
                     <Scene key="SignUpPage" component={SignUpPage}/>
                     <Scene key="ModifyPassPage" component={ModifyPassPage}/>
                     <Scene key="PublicCoursePage" component={PublicCoursePage}/>
-                    <Scene key="MyCourseListManagePage" component={MyCourseListManagePage} initial={true}/>
-                    <Scene key="AddCoursePage" component={AddCoursePage} initial={true}/>
-                    <Scene key="MyCourseSignListWithQRCodePage" component={MyCourseSignListWithQRCodePage} initial={true}/>
+                    <Scene key="MyCourseListManagePage" component={MyCourseListManagePage}/>
+                    <Scene key="AddCoursePage" component={AddCoursePage}/>
+                    <Scene key="MyCourseSignListWithQRCodePage" component={MyCourseSignListWithQRCodePage}/>
 
                 </Scene>
             </Router>

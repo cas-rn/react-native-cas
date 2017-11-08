@@ -3,8 +3,8 @@
  */
 
 import * as StandaloneUtil from "../../util/StandaloneUtil";
-var URLConf = {};
-URLConf.http = {
+let ApiUtil = {};
+ApiUtil.http = {
     BASEURL : StandaloneUtil.string.BASEURL,
 
     RET_TYPE_SUCCESS : 1,
@@ -26,6 +26,6 @@ URLConf.http = {
     ],
 
 };
-URLConf.TEST = URLConf.http.baseUrl + URLConf.http.baseUrl;
+ApiUtil.TEST = ApiUtil.http.baseUrl + ApiUtil.http.baseUrl;
 
-module.exports = URLConf;
+module.exports = ApiUtil;

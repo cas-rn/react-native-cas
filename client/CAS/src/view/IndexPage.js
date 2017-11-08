@@ -12,6 +12,7 @@ import { Actions } from "react-native-router-flux";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
 import AMapLocationUtil from "../util/AMapLocationUtil";
 import PropTypes from "prop-types";
+import * as ConstantUtil from "../util/ConstantUtil";
 
 export default class IndexPage extends BaseComponent {
 
@@ -21,7 +22,7 @@ export default class IndexPage extends BaseComponent {
     };
 
     static defaultProps = {
-        role : '0', //0-老师，1-学生
+        role : '2', //1-老师，2-学生
     };
 
     // 构造
@@ -90,6 +91,7 @@ export default class IndexPage extends BaseComponent {
     componentWillMount() {
         super.componentWillMount();
         this.baseCommon.componentWillMount();
+        console.log(global.gUserInfo);
 
     }
 
@@ -100,7 +102,7 @@ export default class IndexPage extends BaseComponent {
                 {ViewUtil.getViewStatusBar()}
                 <HeaderNormalWithRightButtonComponent textCenter={'主 页'}
                                                       _leftBtnShouldShow={true}
-                                                      _rightBtnShouldShow={true}
+                                                      _rightBtnShouldShow={false}
                                                       _textBtn={'btn'}
                                                       _onPressBtn={() => {
                                                           console.log(123);
@@ -120,34 +122,8 @@ export default class IndexPage extends BaseComponent {
                     <MyViewComponent
                         style={[ StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite, StyleUtil.gStyles.gCardBgWhite ]}>
 
-                        <MyButtonComponent
-                            style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                marginBottom : 20,
-                                marginTop : 40,
-                            }, ]}
-                            type={'primary'}
-                            onPress={() => {
-                                this.onPressSignScan();
-                            }}
-                        >
-                            <Text> 扫码签到 </Text>
-                        </MyButtonComponent>
-
-                        <MyButtonComponent
-                            style={[ StyleUtil.gStyles.gButtonBlueDefault, {
-                                marginBottom : 20,
-                                marginTop : 40,
-                            }, ]}
-                            type={'primary'}
-                            onPress={() => {
-                                this.onPressSignGPS();
-                            }}
-                        >
-                            <Text> GPS签到 </Text>
-                        </MyButtonComponent>
-
                         {
-                            this.props.role == '0'
+                            gUserInfo && gUserInfo.role == '1'
                                 ? <MyViewComponent>
 
                                 <MyButtonComponent
@@ -157,7 +133,7 @@ export default class IndexPage extends BaseComponent {
                                     }, ]}
                                     type={'primary'}
                                     onPress={() => {
-                                        this.onPressSignGPS();
+                                        Actions.PublicCoursePage();
                                     }}
                                 >
                                     <Text> 发布课程 </Text>
@@ -169,7 +145,7 @@ export default class IndexPage extends BaseComponent {
                                     }, ]}
                                     type={'primary'}
                                     onPress={() => {
-                                        this.onPressSignGPS();
+                                        Actions.MyCourseListManagePage({ typePage : ConstantUtil.typePageReleasedCourse });
                                     }}
                                 >
                                     <Text> 已发布课程 </Text>
@@ -181,11 +157,14 @@ export default class IndexPage extends BaseComponent {
                                     }, ]}
                                     type={'primary'}
                                     onPress={() => {
-                                        this.onPressSignGPS();
+                                        Actions.MyCourseListManagePage({ typePage : ConstantUtil.typePageManageMyCourse });
                                     }}
                                 >
                                     <Text> 我的课程 </Text>
                                 </MyButtonComponent>
+
+                            </MyViewComponent>
+                                : <MyViewComponent>
                                 <MyButtonComponent
                                     style={[ StyleUtil.gStyles.gButtonBlueDefault, {
                                         marginBottom : 20,
@@ -193,17 +172,52 @@ export default class IndexPage extends BaseComponent {
                                     }, ]}
                                     type={'primary'}
                                     onPress={() => {
-                                        Actions.ModifyPassPage();
+                                        this.onPressSignScan();
                                     }}
                                 >
-                                    <Text> 修改密码 </Text>
+                                    <Text> 扫码签到 </Text>
                                 </MyButtonComponent>
 
-                            </MyViewComponent>
-                                : <MyViewComponent>
-
+                                <MyButtonComponent
+                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                        marginBottom : 20,
+                                        marginTop : 40,
+                                    }, ]}
+                                    type={'primary'}
+                                    onPress={() => {
+                                        this.onPressSignGPS();
+                                    }}
+                                >
+                                    <Text> GPS签到 </Text>
+                                </MyButtonComponent>
                             </MyViewComponent>
                         }
+
+                        <MyButtonComponent
+                            style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                marginBottom : 20,
+                                marginTop : 40,
+                            }, ]}
+                            type={'primary'}
+                            onPress={() => {
+                                Actions.ModifyPassPage();
+                            }}
+                        >
+                            <Text> 修改密码 </Text>
+                        </MyButtonComponent>
+
+                        <MyButtonComponent
+                            style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                marginBottom : 20,
+                                marginTop : 40,
+                            }, ]}
+                            type={'primary'}
+                            onPress={() => {
+                                ViewUtil.popAllAndToLogin();
+                            }}
+                        >
+                            <Text> 退出登录 </Text>
+                        </MyButtonComponent>
 
                     </MyViewComponent>
 

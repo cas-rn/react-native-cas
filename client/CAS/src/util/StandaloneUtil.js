@@ -3,7 +3,7 @@
  */
 
 
-var ConfigUtil = {
+var StandaloneUtil = {
 
     config : {
         appVersion : '226',
@@ -17,7 +17,8 @@ var ConfigUtil = {
 
         //启动页
 
-        BASEURL : 'https://api.yoopard.com/',
+        BASEURL : 'http://192.168.196.115:8081/',
+        // BASEURL : 'http://www.xkqd.com/',
 
         AMAP_APPKEY_ANDROID : "635d14f55bf662eeda530d6f2bcea6c6",   //高德地图SDK key设置
         AMAP_APPKEY_IOS : "bf1d86e15c81b28b4cadafc11a2ab5a9",   //高德地图SDK key设置
@@ -25,4 +26,4 @@ var ConfigUtil = {
 
 };
 
-module.exports = ConfigUtil;
+module.exports = StandaloneUtil;

@@ -74,6 +74,9 @@ HTTPUtil.postMyAsync = async function (url, bodyObject) {
         bodyObject.user_name = gUserInfo.user_name;
         bodyObject.user_id = gUserInfo.user_id;
     }
+    if (gAccessTokenInfo) {
+        bodyObject.user_token = gAccessTokenInfo;
+    }
     return await HTTPUtil.postAsync(url, bodyObject, headers);
 };
 

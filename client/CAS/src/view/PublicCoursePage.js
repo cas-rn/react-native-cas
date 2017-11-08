@@ -15,9 +15,10 @@ import MyButtonComponent from "../component/MyButtonComponent";
 import { Actions } from "react-native-router-flux";
 import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithRightButtonComponent";
 import { List, Radio } from "antd-mobile";
-import MyPickerNormalComponent from "../component/MyPickerNormalComponent";
 import MyDatePickerNormalComponent from "../component/MyDatePickerNormalComponent";
 import * as DateParseFormatUtil from "../util/DateParseFormatUtil";
+import * as ApiUtil from "../api/common/ApiUtil";
+import MyLabelTextComponent from "../component/MyLabelTextComponent";
 const RadioItem = Radio.RadioItem;
 
 export default class PublicCoursePage extends BaseComponent {
@@ -29,10 +30,13 @@ export default class PublicCoursePage extends BaseComponent {
         this.baseCommon = new BaseCommon({ ...props, backPress : (e) => this.onBackPress(e) });
         // 初始状态
         this.state = {
-            showPickerNormal : true,
+            showPickerNormal : false,
+            curCourse : {
+                lecture_name : '请选择',
+            },
             value : 0,  //0-学生，1-老师
 
-            name : '',
+            address : '',
         };
     }
 
@@ -54,32 +58,20 @@ export default class PublicCoursePage extends BaseComponent {
     }
 
     checkInfo() {
-        if (this.state.name == '' || StringUtil.trim(this.state.name).length == 0) {
-            ViewUtil.showToast('请输入姓名');
+        if (!this.state.curCourse.id) {
+            ViewUtil.showToast('请选择课程');
             return false;
         }
-        if (this.state.telephone == '' || StringUtil.trim(this.state.telephone).length == 0) {
-            ViewUtil.showToast('请输入手机号');
+        if (this.state.address == '' || StringUtil.trim(this.state.address).length == 0) {
+            ViewUtil.showToast('请输入地址');
             return false;
         }
 
-        if (this.state.password == '' || StringUtil.trim(this.state.password).length < 6) {
-            ViewUtil.showToast('请输入密码,不少于6位');
-            return false;
-        }
-        if (this.state.password2 == '' || StringUtil.trim(this.state.password2).length < 6) {
-            ViewUtil.showToast('请输入重复密码,不少于6位');
-            return false;
-        }
-        if (this.state.password != this.state.password2) {
-            ViewUtil.showToast('两次密码输入不一致');
-            return false;
-        }
         return true;
     }
 
-    loginCallBack(json) {
-        if (json.code != URLConf.http.ERROR_CODE_SUCCESS_0) {
+    onOkPressedCallBack(json) {
+        if (json.code != ApiUtil.http.ERROR_CODE_SUCCESS_0) {
             ViewUtil.dismissToastLoading();
             //处理自定义异常
             SecretAsync.onCustomExceptionNormal(json);
@@ -87,28 +79,31 @@ export default class PublicCoursePage extends BaseComponent {
             return;
 
         }
-
-        // if (URLConf.http.RET_TYPE_SUCCESS == retType) {
-        // alert(StringUtil.object2Json(json));
-        var userInfo = {
-            user_id : json.response.user_id,
-            user_name : json.response.user_name,
-            user_telephone : StringUtil.trim(this.state.telephone),
-            user_password : StringUtil.trim(this.state.password),
-        };
-        gUserInfo = userInfo;
-        storage.save({ key : ConstantUtil.strings.keyUserInfo, data : userInfo });
-        var tokenInfo = {
-            token : json.response.token,
-            expired_time : json.response.expired_time,
-        };
-        storage.save({ key : ConstantUtil.strings.keyTokenInfo, data : tokenInfo });
-
+        ViewUtil.showToast(ConstantUtil.toastDoSuccess);
+        Actions.pop();
     }
 
-    onPressSignUp() {
+    onOkPressed() {
 
-        Actions.SignUpPage();
+        if (!this.checkInfo()) {
+            return;
+        }
+
+        ViewUtil.showToastLoading();
+
+        //发布课程
+        let bodyObj = {
+            api_name : 'teacher.release.add',
+            lectures_id : this.state.curCourse.id,
+            schooltime : this.action.value,
+            start_sign_time : this.action1.value,
+            end_sign_time : this.action2.value,
+            room : this.state.address.trim(),
+
+        };
+        SecretAsync.postWithCommonErrorShow((jsonObj) => {
+            this.onOkPressedCallBack(jsonObj);
+        }, bodyObj);
 
     }
 
@@ -168,6 +163,8 @@ export default class PublicCoursePage extends BaseComponent {
 
             selectedValue = new Date();
             action.selectedValue = selectedValue;
+            action.value = DateParseFormatUtil.formatDateToLong10(selectedValue);
+
         }
 
         {
@@ -175,12 +172,15 @@ export default class PublicCoursePage extends BaseComponent {
             selectedValue = new Date();
 
             action1.selectedValue = selectedValue;
+            action1.value = DateParseFormatUtil.formatDateToLong10(selectedValue);
+
         }
 
         {
             let selectedValue = null;
             selectedValue = new Date();
             action2.selectedValue = selectedValue;
+            action2.value = DateParseFormatUtil.formatDateToLong10(selectedValue);
         }
 
     }
@@ -224,16 +224,29 @@ export default class PublicCoursePage extends BaseComponent {
 
                         <List>
 
-                            <MyPickerNormalComponent ref="pickerNormal"
-                                                     _visible={this.state.showPickerNormal}
+                            <MyLabelTextComponent
+                                _rightIconShouldShow={true}
+                                _label={'选择课程'}
+                                _labelContent={this.state.curCourse.lecture_name}
+                                onPress={() => {
+                                    Actions.MyCourseListManagePage({
+                                        typePage : ConstantUtil.typePageSelectCourse, setData : (data) => {
+                                            console.log(data);
+                                            this.setState({
+                                                curCourse : data,
+                                            });
+                                        }
+                                    });
+                                }}
+
                             />
 
                             <List.Item>
 
                                 <LabelWithInputSingleLineNormalNoBorder _labelContent={'上课地址'}
-                                                                        _inputValue={this.state.name}
+                                                                        _inputValue={this.state.address}
                                                                         _onChange={(value) => {
-                                                                            this.baseCommon.mounted && this.setState({ name : value });
+                                                                            this.baseCommon.mounted && this.setState({ address : value });
                                                                         }}
                                 />
                             </List.Item>
@@ -246,7 +259,7 @@ export default class PublicCoursePage extends BaseComponent {
                                     action.selectedValue = v;
                                     console.log(action.value);
 
-                                    action.value = DateParseFormatUtil.formatDateLongOrStringToStringMinute(v);
+                                    action.value = DateParseFormatUtil.formatDateToLong10(v);
 
                                     console.log(action.value);
                                 }}
@@ -259,7 +272,7 @@ export default class PublicCoursePage extends BaseComponent {
                                     action1.selectedValue = v;
                                     console.log(action1.value);
 
-                                    action1.value = DateParseFormatUtil.formatDateLongOrStringToStringMinute(v);
+                                    action1.value = DateParseFormatUtil.formatDateToLong10(v);
 
                                     console.log(action1.value);
                                 }}
@@ -273,7 +286,7 @@ export default class PublicCoursePage extends BaseComponent {
                                     action2.selectedValue = v;
                                     console.log(action2.value);
 
-                                    action2.value = DateParseFormatUtil.formatDateLongOrStringToStringMinute(v);
+                                    action2.value = DateParseFormatUtil.formatDateToLong10(v);
 
                                     // action2.value = v.format("YYYY-MM-DD HH:mm");//data为日期的字符串形式
                                     console.log(action2.value);
@@ -289,7 +302,7 @@ export default class PublicCoursePage extends BaseComponent {
                             }, ]}
                             type={'primary'}
                             onPress={() => {
-                                this.onPressSignUp();
+                                this.onOkPressed();
                             }}
                         >
                             <Text> 发 布 </Text>
