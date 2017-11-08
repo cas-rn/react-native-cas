@@ -15,7 +15,11 @@ export default class setup extends Component {
         StorageUtil.getValueByKey(ConstantUtil.keyUserInfo, (ret) => {
             global.gUserInfo = ret;
             console.log(global.gUserInfo);
-        },);
+        }, () => {
+            global.hasLogin = false;
+            this.setState({});
+
+        });
         StorageUtil.getValueByKey(ConstantUtil.keyTokenInfo, (ret) => {
             global.gAccessTokenInfo = ret;
             if (ret) {
@@ -30,7 +34,11 @@ export default class setup extends Component {
             console.log(hasLogin);
             this.setState({});
 
-        },);
+        }, () => {
+            global.hasLogin = false;
+            this.setState({});
+
+        });
     }
 
     componentDidMount() {
