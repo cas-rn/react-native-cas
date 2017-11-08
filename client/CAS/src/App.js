@@ -10,6 +10,7 @@ import PublicCoursePage from "./view/PublicCoursePage";
 import MyCourseListManagePage from "./view/MyCourseListManagePage";
 import AddCoursePage from "./view/AddCoursePage";
 import MyCourseSignListWithQRCodePage from "./view/MyCourseSignListWithQRCodePage";
+import DetailCoursePage from "./view/DetailCoursePage";
 
 import BaseCommon from "./common/BaseCommon";
 
@@ -55,6 +56,7 @@ export default class App extends Component {
                     <Scene key="MyCourseListManagePage" component={MyCourseListManagePage}/>
                     <Scene key="AddCoursePage" component={AddCoursePage}/>
                     <Scene key="MyCourseSignListWithQRCodePage" component={MyCourseSignListWithQRCodePage}/>
+                    <Scene key="DetailCoursePage" component={DetailCoursePage}/>
 
                 </Scene>
             </Router>

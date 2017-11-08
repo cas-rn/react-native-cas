@@ -13,6 +13,8 @@ import HeaderNormalWithRightButtonComponent from "../component/HeaderNormalWithR
 import AMapLocationUtil from "../util/AMapLocationUtil";
 import PropTypes from "prop-types";
 import * as ConstantUtil from "../util/ConstantUtil";
+import * as SecretAsync from "../api/common/SecretAsync";
+import * as ApiUtil from "../api/common/ApiUtil";
 
 export default class IndexPage extends BaseComponent {
 
@@ -64,13 +66,66 @@ export default class IndexPage extends BaseComponent {
 
     }
 
+    componentWillMount() {
+        super.componentWillMount();
+        this.baseCommon.componentWillMount();
+        console.log(global.gUserInfo);
+
+    }
+
+    onOkScanCallBack(json) {
+        if (json.code != ApiUtil.http.ERROR_CODE_SUCCESS_0) {
+            ViewUtil.dismissToastLoading();
+            //处理自定义异常
+            SecretAsync.onCustomExceptionNormal(json);
+
+            return;
+
+        }
+        ViewUtil.showToast(ConstantUtil.toastDoSuccess);
+        // Actions.pop();
+    }
+
+    checkInfo() {
+
+        if (TmpDataUtil.curLongitude == '') {
+            ViewUtil.showToast('获取位置失败');
+            return false;
+        }
+        return true;
+    }
+
+    onOkScan(value) {
+
+        if (!this.checkInfo()) {
+            return;
+        }
+
+        ViewUtil.showToastLoading();
+
+        //发布课程
+        let bodyObj = {
+            api_name : 'student.sign.scanning',
+            qrcode : value,
+            longitude : TmpDataUtil.curLongitude,
+            latitude : TmpDataUtil.curLatitude,
+            address : '1',
+
+        };
+        SecretAsync.postWithCommonErrorShow((jsonObj) => {
+            this.onOkScanCallBack(jsonObj);
+        }, bodyObj);
+
+    }
+
     onPressSignScan() {
+        this.onPressSignGPS();
 
         let bodyObj = {};
-        alert('132');
         Actions.ShowScanPage({
             onReadData : (value) => {
                 console.log(value);
+                this.onOkScan(value);
             }
         });
 
@@ -79,6 +134,8 @@ export default class IndexPage extends BaseComponent {
     onPressSignGPS() {
 
         let bodyObj = {};
+        TmpDataUtil.curLongitude = '';
+        TmpDataUtil.curLatitude = '';
         this.amapLocationUtil = new AMapLocationUtil({
             _onRequestLocationOk : () => {
                 LOG(22);
@@ -86,13 +143,6 @@ export default class IndexPage extends BaseComponent {
             }
         });
         this.amapLocationUtil._showLocation();
-    }
-
-    componentWillMount() {
-        super.componentWillMount();
-        this.baseCommon.componentWillMount();
-        console.log(global.gUserInfo);
-
     }
 
     render() {
@@ -121,6 +171,8 @@ export default class IndexPage extends BaseComponent {
 
                     <MyViewComponent
                         style={[ StyleUtil.gStyles.gPadding20, StyleUtil.gStyles.gFlex1, StyleUtil.gStyles.gBgWhite, StyleUtil.gStyles.gCardBgWhite ]}>
+
+                        <Text style={{ textAlign : 'center', }}> {gUserInfo.user_name} </Text>
 
                         {
                             gUserInfo && gUserInfo.role == '1'
@@ -178,6 +230,19 @@ export default class IndexPage extends BaseComponent {
                                     <Text> 扫码签到 </Text>
                                 </MyButtonComponent>
 
+                                {/*<MyButtonComponent*/}
+                                {/*style={[ StyleUtil.gStyles.gButtonBlueDefault, {*/}
+                                {/*marginBottom : 20,*/}
+                                {/*marginTop : 40,*/}
+                                {/*}, ]}*/}
+                                {/*type={'primary'}*/}
+                                {/*onPress={() => {*/}
+                                {/*this.onPressSignGPS();*/}
+                                {/*}}*/}
+                                {/*>*/}
+                                {/*<Text> GPS签到 </Text>*/}
+                                {/*</MyButtonComponent>*/}
+
                                 <MyButtonComponent
                                     style={[ StyleUtil.gStyles.gButtonBlueDefault, {
                                         marginBottom : 20,
@@ -185,10 +250,23 @@ export default class IndexPage extends BaseComponent {
                                     }, ]}
                                     type={'primary'}
                                     onPress={() => {
-                                        this.onPressSignGPS();
+                                        Actions.MyCourseListManagePage({ typePage : ConstantUtil.typePageSelectSigningCourse });
                                     }}
                                 >
-                                    <Text> GPS签到 </Text>
+                                    <Text> 可签到课程 </Text>
+                                </MyButtonComponent>
+
+                                <MyButtonComponent
+                                    style={[ StyleUtil.gStyles.gButtonBlueDefault, {
+                                        marginBottom : 20,
+                                        marginTop : 40,
+                                    }, ]}
+                                    type={'primary'}
+                                    onPress={() => {
+                                        Actions.MyCourseListManagePage({ typePage : ConstantUtil.typePageSelectSignedCourse });
+                                    }}
+                                >
+                                    <Text> 已签到课程 </Text>
                                 </MyButtonComponent>
                             </MyViewComponent>
                         }

@@ -7,8 +7,8 @@ import * as ConfigUtil from "./ConstantUtil";
 export async function getValueByKey(key,
     callback = () => {
     },
-    callbackError = () => {
-        ViewUtil.showToast(key + ' not found!');
+    callbackError = (key) => {
+        console.log(key + ' not found!');
     }) {
     try {
         var ret = await storage.load({
@@ -21,7 +21,7 @@ export async function getValueByKey(key,
         return ret;
     } catch (e) {
         // console.error(e);
-        callbackError();
+        callbackError(key);
     }
 }
 

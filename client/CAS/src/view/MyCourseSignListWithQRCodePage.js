@@ -20,6 +20,8 @@ import * as SizeUtil from "../util/SizeUtil";
 import * as ApiUtil from "../api/common/ApiUtil";
 import * as _ from "lodash";
 import MyString2QRCodeComponent from "../component/MyString2QRCodeComponent";
+import MyLabelTextComponent from "../component/MyLabelTextComponent";
+import * as DateparseFormatUtil from "../util/DateParseFormatUtil";
 
 var Platform = require('Platform');
 
@@ -51,6 +53,7 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
             rightBtnShouldShow : rightBtnShouldShow,
             headerTitle : headerTitle,
             qrcode : '',
+            signcode : '',
             dataList : [
                 // { key : '11', lecture_name : 'name',lecture_introduction:'dddddd' },
                 // { key : '12', lecture_name : 'name',lecture_introduction:'dddddd' },
@@ -65,6 +68,7 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
 
         InteractionManager.runAfterInteractions(() => {
             // this.onFirstComeIn();
+            this.onOkPressed();
 
         });
 
@@ -80,9 +84,9 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
 
     getCenterHeight() {
         if (Platform.OS === 'ios') {
-            return StyleUtil.size.height - 100;
+            return StyleUtil.size.height - 100 - 250;
         } else {
-            return StyleUtil.size.height - 120;
+            return StyleUtil.size.height - 120 - 250;
 
         }
     }
@@ -138,13 +142,25 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
                                     paddingRight : 20
                                 }}>
                                 <View style={{ flexDirection : 'row', }}>
-                                    <Text>{'课程：'}</Text>
-                                    <Text>{item.lecture_name}</Text>
+                                    <Text>{'姓名：'}</Text>
+                                    <Text>{item.username}</Text>
                                 </View>
 
                                 <View style={{ flexDirection : 'row', }}>
-                                    <Text>{'描述：'}</Text>
-                                    <Text>{item.lecture_introduction}</Text>
+                                    <Text>{'时间：'}</Text>
+                                    <Text>{DateparseFormatUtil.formatDateLongOrStringToStringMinuteLong10(item.add_time)}</Text>
+                                </View>
+                                <View style={{ flexDirection : 'row', }}>
+                                    <Text>{'地址：'}</Text>
+                                    <Text>{item.address}</Text>
+                                </View>
+                                <View style={{ flexDirection : 'row', }}>
+                                    <Text>{'经度：'}</Text>
+                                    <Text>{item.longitude}</Text>
+                                </View>
+                                <View style={{ flexDirection : 'row', }}>
+                                    <Text>{'纬度：'}</Text>
+                                    <Text>{item.latitude}</Text>
                                 </View>
                             </View>
 
@@ -159,8 +175,12 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
         if (this.state.qrcode.length > 0) {
             qrCodeView = (
 
-                <MyViewComponent style={{ alignItems : 'center', justifyContent : 'center', }}>
-                    <MyString2QRCodeComponent content={this.state.qrcode}/>
+                <MyViewComponent>
+
+                    <MyViewComponent style={{ alignItems : 'center', justifyContent : 'center', }}>
+                        <MyString2QRCodeComponent content={this.state.qrcode}/>
+                    </MyViewComponent>
+                    <MyLabelTextComponent _label={'验证码'} _labelContent={this.state.signcode}/>
 
                 </MyViewComponent>
 
@@ -248,6 +268,7 @@ export default class MyCourseSignListWithQRCodePage extends BaseComponent {
         if (json.response.qrcode != this.state.qrcode) {
             this.setState({
                 qrcode : json.response.qrcode,
+                signcode : json.response.signcode,
             });
         }
 

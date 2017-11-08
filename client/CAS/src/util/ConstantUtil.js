@@ -87,6 +87,9 @@ var ConstantUtil = {
     typePageReleasedCourse : 'typePageReleasedCourse',
     typePageSignListWithQRCode : 'typePageSignListWithQRCode',
 
+    typePageSelectSigningCourse : 'typePageSelectSigningCourse',
+    typePageSelectSignedCourse : 'typePageSelectSignedCourse',
+
     //storageKeys
     keyDbVersion : 'keyDbVersion',
     keyUserId : 'keyUserId',

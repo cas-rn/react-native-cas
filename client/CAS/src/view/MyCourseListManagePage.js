@@ -58,6 +58,12 @@ export default class MyCourseListManagePage extends BaseComponent {
         } else if (this.props.typePage == ConstantUtil.typePageReleasedCourse) {
             rightBtnShouldShow = false;
             headerTitle = '已发布课程';
+        } else if (this.props.typePage == ConstantUtil.typePageSelectSigningCourse) {
+            rightBtnShouldShow = false;
+            headerTitle = '可签到课程';
+        } else if (this.props.typePage == ConstantUtil.typePageSelectSignedCourse) {
+            rightBtnShouldShow = false;
+            headerTitle = '已签到课程';
         }
 
         this.state = {
@@ -228,6 +234,136 @@ export default class MyCourseListManagePage extends BaseComponent {
                     </View>
                 );
             };
+        } else if (this.props.typePage == ConstantUtil.typePageSelectSigningCourse) {
+            row = (item) => {
+
+                return (
+                    <View key={item.key}>
+                        <Swipeout right={
+                            [
+                                {
+                                    text : 'Button',
+                                    backgroundColor : ColorUtil.redTheme,
+                                    onPress : () => {
+                                        alert('123' + item.key);
+                                    },
+                                }
+                            ]
+                        }>
+                            <TouchableOpacity
+                                activeOpacity={ConfigUtil.customActiveOpacity}
+                                onPress={() => {
+                                    this.onPressItem(item);
+
+                                }}>
+
+                                <View
+                                    style={{
+                                        paddingBottom : 5,
+                                        paddingTop : 5,
+                                        paddingLeft : 20,
+                                        paddingRight : 20
+                                    }}>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'课程：'}</Text>
+                                        <Text>{item.lecture_name}</Text>
+                                    </View>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'老师：'}</Text>
+                                        <Text>{item.username}</Text>
+                                    </View>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'地址：'}</Text>
+                                        <Text>{item.room}</Text>
+                                    </View>
+
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'时间：'}</Text>
+                                        <Text>{DateparseFormatUtil.formatDateLongOrStringToStringMinuteLong10(item.schooltime)}</Text>
+                                    </View>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'开始时间：'}</Text>
+                                        <Text>{DateparseFormatUtil.formatDateLongOrStringToStringMinuteLong10(item.start_sign_time)}</Text>
+                                    </View>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'结束时间：'}</Text>
+                                        <Text>{DateparseFormatUtil.formatDateLongOrStringToStringMinuteLong10(item.end_sign_time)}</Text>
+                                    </View>
+                                </View>
+
+                            </TouchableOpacity>
+                        </Swipeout>
+
+                    </View>
+                );
+            };
+        } else if (this.props.typePage == ConstantUtil.typePageSelectSignedCourse) {
+            row = (item) => {
+
+                return (
+                    <View key={item.key}>
+                        <Swipeout right={
+                            [
+                                {
+                                    text : 'Button',
+                                    backgroundColor : ColorUtil.redTheme,
+                                    onPress : () => {
+                                        alert('123' + item.key);
+                                    },
+                                }
+                            ]
+                        }>
+                            <TouchableOpacity
+                                activeOpacity={ConfigUtil.customActiveOpacity}
+                                onPress={() => {
+                                    this.onPressItem(item);
+
+                                }}>
+
+                                <View
+                                    style={{
+                                        paddingBottom : 5,
+                                        paddingTop : 5,
+                                        paddingLeft : 20,
+                                        paddingRight : 20
+                                    }}>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'课程：'}</Text>
+                                        <Text>{item.lecture_name}</Text>
+                                    </View>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'老师：'}</Text>
+                                        <Text>{item.username}</Text>
+                                    </View>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'地址：'}</Text>
+                                        <Text>{item.room}</Text>
+                                    </View>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'签到地址：'}</Text>
+                                        <Text>{item.address}</Text>
+                                    </View>
+
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'时间：'}</Text>
+                                        <Text>{DateparseFormatUtil.formatDateLongOrStringToStringMinuteLong10(item.schooltime)}</Text>
+                                    </View>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'开始时间：'}</Text>
+                                        <Text>{DateparseFormatUtil.formatDateLongOrStringToStringMinuteLong10(item.start_sign_time)}</Text>
+                                    </View>
+                                    <View style={{ flexDirection : 'row', }}>
+                                        <Text>{'结束时间：'}</Text>
+                                        <Text>{DateparseFormatUtil.formatDateLongOrStringToStringMinuteLong10(item.end_sign_time)}</Text>
+                                    </View>
+                                </View>
+
+                            </TouchableOpacity>
+                        </Swipeout>
+
+                    </View>
+                );
+            };
         }
 
         let qrCodeView = null;
@@ -317,6 +453,11 @@ export default class MyCourseListManagePage extends BaseComponent {
             Actions.MyCourseSignListWithQRCodePage({ data : item, });
             // Actions.MyCourseListManagePage({typePage:ConstantUtil.typePageSignListWithQRCode});
 
+        } else if (this.props.typePage == ConstantUtil.typePageSelectSigningCourse) {
+            Actions.DetailCoursePage({ data : item, });
+
+        } else if (this.props.typePage == ConstantUtil.typePageSelectSignedCourse) {
+
         }
     }
 
@@ -340,6 +481,10 @@ export default class MyCourseListManagePage extends BaseComponent {
         } else if (this.props.typePage == ConstantUtil.typePageReleasedCourse) {
 
             return;
+        } else if (this.props.typePage == ConstantUtil.typePageSelectSigningCourse) {
+
+        } else if (this.props.typePage == ConstantUtil.typePageSelectSignedCourse) {
+
         }
 
     }
@@ -367,6 +512,12 @@ export default class MyCourseListManagePage extends BaseComponent {
 
             } else if (this.props.typePage == ConstantUtil.typePageReleasedCourse) {
                 bodyObj.api_name = 'teacher.release.getlist';
+
+            } else if (this.props.typePage == ConstantUtil.typePageSelectSigningCourse) {
+                bodyObj.api_name = 'student.release.getlist';
+
+            } else if (this.props.typePage == ConstantUtil.typePageSelectSignedCourse) {
+                bodyObj.api_name = 'student.sign.singlog';
 
             }
 
@@ -414,10 +565,14 @@ export default class MyCourseListManagePage extends BaseComponent {
         if (this.props.typePage == ConstantUtil.typePageSelectCourse
             || this.props.typePage == ConstantUtil.typePageManageMyCourse
             || this.props.typePage == ConstantUtil.typePageReleasedCourse
+            || this.props.typePage == ConstantUtil.typePageSelectSigningCourse
+            || this.props.typePage == ConstantUtil.typePageSelectSignedCourse
         ) {
             mOkArr = TmpDataUtil.getDataList(_retArr);
 
-        } else if (this.props.typePage == '1') {
+        } else if (this.props.typePage == ConstantUtil.typePageSelectSigningCourse) {
+
+        } else if (this.props.typePage == ConstantUtil.typePageSelectSignedCourse) {
 
         }
 
