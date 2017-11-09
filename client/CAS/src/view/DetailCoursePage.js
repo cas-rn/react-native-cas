@@ -77,7 +77,7 @@ export default class DetailCoursePage extends BaseComponent {
             qrcode : value,
             longitude : TmpDataUtil.curLongitude,
             latitude : TmpDataUtil.curLatitude,
-            address : '1',
+            address : TmpDataUtil.curAddress,
 
         };
         SecretAsync.postWithCommonErrorShow((jsonObj) => {
@@ -102,7 +102,7 @@ export default class DetailCoursePage extends BaseComponent {
             signcode : this.state.passwordNow,
             longitude : TmpDataUtil.curLongitude,
             latitude : TmpDataUtil.curLatitude,
-            address : '1',
+            address : TmpDataUtil.curAddress,
 
         };
         SecretAsync.postWithCommonErrorShow((jsonObj) => {
@@ -130,6 +130,7 @@ export default class DetailCoursePage extends BaseComponent {
         let bodyObj = {};
         TmpDataUtil.curLongitude = '';
         TmpDataUtil.curLatitude = '';
+        TmpDataUtil.Address = '';
         this.amapLocationUtil = new AMapLocationUtil({
             _onRequestLocationOk : () => {
                 LOG(22);
@@ -139,7 +140,7 @@ export default class DetailCoursePage extends BaseComponent {
                 }
             }
         });
-        this.amapLocationUtil._showLocation();
+        this.amapLocationUtil._showReGeocode();
     }
 
     render() {

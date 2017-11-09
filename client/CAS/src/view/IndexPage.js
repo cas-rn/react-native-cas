@@ -136,13 +136,14 @@ export default class IndexPage extends BaseComponent {
         let bodyObj = {};
         TmpDataUtil.curLongitude = '';
         TmpDataUtil.curLatitude = '';
+        TmpDataUtil.curAddress = '';
         this.amapLocationUtil = new AMapLocationUtil({
             _onRequestLocationOk : () => {
                 LOG(22);
                 LOG(TmpDataUtil.curLatitude);
             }
         });
-        this.amapLocationUtil._showLocation();
+        this.amapLocationUtil._showReGeocode();
     }
 
     render() {

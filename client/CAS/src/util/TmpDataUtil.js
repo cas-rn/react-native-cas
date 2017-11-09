@@ -3,6 +3,7 @@ let TmpDataUtil = {
     isRequestLocation : false,
     curLatitude : '',
     curLongitude : '',
+    curAddress : '',
 
     getDataList : (arr) => {
         let retArr = [];
