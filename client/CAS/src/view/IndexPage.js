@@ -109,7 +109,7 @@ export default class IndexPage extends BaseComponent {
             qrcode : value,
             longitude : TmpDataUtil.curLongitude,
             latitude : TmpDataUtil.curLatitude,
-            address : '1',
+            address : TmpDataUtil.curAddress,
 
         };
         SecretAsync.postWithCommonErrorShow((jsonObj) => {
